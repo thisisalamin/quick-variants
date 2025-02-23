@@ -3,7 +3,12 @@
  * Plugin Name: WooCommerce Variant  Product Table
  * Description: Display WooCommerce products in a table format with expandable variants.
  * Version: 1.0
- * Author: Your Name
+ * Author: Mohamed Alamin
+ * Author URI: https://www.crafely.com
+ * License: GPL2
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: wc-product-table
+ * Domain Path: /languages
  * Requires at least: 5.0
  * Tested up to: 6.4
  */
