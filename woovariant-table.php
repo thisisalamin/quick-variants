@@ -42,12 +42,12 @@ function wc_product_table_shortcode($atts) {
         <table class="min-w-full border-collapse !border !border-gray-200">
             <!-- Table Header -->
             <thead>
-                <tr class="!border-b !border-gray-200">
-                    <th class="p-4 text-left font-semibold !border !border-gray-200 w-24">IMAGES</th>
+                <tr class="!border-b !border-gray-200 bg-[#FAFAFA]">
+                    <th class="p-4 text-center font-semibold !border !border-gray-200 w-24">IMAGES</th>
                     <th class="p-4 text-left font-semibold !border !border-gray-200 w-[400px]">PRODUCT</th>
-                    <th class="p-4 text-left font-semibold !border !border-gray-200">PRICE</th>
-                    <th class="p-4 text-left font-semibold !border !border-gray-200">QTY</th>
-                    <th class="p-4 text-left font-semibold !border !border-gray-200">OPTIONS</th>
+                    <th class="p-4 text-center font-semibold !border !border-gray-200">PRICE</th>
+                    <th class="p-4 text-center font-semibold !border !border-gray-200">QTY</th>
+                    <th class="p-4 text-center font-semibold !border !border-gray-200">OPTIONS</th>
                 </tr>
             </thead>
             <!-- Table Body -->
@@ -75,36 +75,38 @@ function wc_product_table_shortcode($atts) {
                     ?>
                     <!-- Product Row -->
                     <tr class="!border-b !border-gray-200">
-                        <td class="p-4 !border !border-gray-200 w-24">
+                        <td class="p-4 !border !border-gray-200 w-24 text-center">
                             <?php 
                             $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
                             $img_url = $image ? $image[0] : wc_placeholder_img_src();
                             ?>
                             <img src="<?php echo esc_url($img_url); ?>" 
                                  alt="<?php echo esc_attr(get_the_title()); ?>" 
-                                 class="w-20 h-20 object-contain"/>
+                                 class="w-20 h-20 object-contain mx-auto"/>
                         </td>
-                        <td class="p-4 !border !border-gray-200 w-[400px]"><?php echo strtoupper(get_the_title()); ?></td>
-                        <td class="p-4 !border !border-gray-200">
-                            <div class="flex flex-col">
-                                <?php if ($product->is_type('variable')): ?>
-                                    <span class="text-gray-500 text-sm">From</span>
-                                <?php endif; ?>
-                                <span><?php echo $product->get_price_html(); ?></span>
+                        <td class="p-4 !border text-black !border-gray-200 w-[400px]"><?php echo strtoupper(get_the_title()); ?></td>
+                        <td class="p-4 !border !border-gray-200 text-center">
+                            <div class="flex flex-row items-center justify-center gap-1">
+                                <?php if ($product->is_type('variable')): 
+                                    $min_price = $product->get_variation_price('min');
+                                    echo 'From ' . '<span class="text-black font-medium">' . wc_price($min_price) . '</span>';
+                                else:
+                                    echo '<span class="text-black font-medium">' . $product->get_price_html() . '</span>';
+                                endif; ?>
                             </div>
                         </td>
-                        <td class="p-4 !border !border-gray-200">
+                        <td class="p-4 !border !border-gray-200 text-center">
                             <?php if (!$product->is_type('variable')): ?>
-                                <input type="number" min="1" value="1" class="w-20 p-2 border rounded">
+                                <input type="number" min="1" value="1" class="w-20 p-2 border rounded mx-auto">
                             <?php endif; ?>
                         </td>
-                        <td class="p-4 !border !border-gray-200">
+                        <td class="p-4 !border !border-gray-200 text-center">
                             <?php if ($product->is_type('variable')): ?>
-                                <button class="toggle-variants bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors w-full" data-id="<?php echo $product->get_id(); ?>">
+                                <button class="toggle-variants bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors w-full max-w-[200px] mx-auto font-bold" data-id="<?php echo $product->get_id(); ?>">
                                     SHOW VARIANTS
                                 </button>
                             <?php else: ?>
-                                <button class="add-to-cart bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors w-full" data-id="<?php echo $product->get_id(); ?>">
+                                <button class="add-to-cart bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors w-full max-w-[200px] mx-auto font-bold" data-id="<?php echo $product->get_id(); ?>">
                                     ADD TO CART
                                 </button>
                             <?php endif; ?>
@@ -129,15 +131,15 @@ function wc_product_table_shortcode($atts) {
                                 </td>
                                 <td class="p-4 !border !border-gray-200"><?php echo strtoupper(implode(', ', $variation['attributes'])); ?></td>
                                 <td class="p-4 !border !border-gray-200">
-                                    <div class="flex flex-col">
-                                        <span><?php echo wc_price($variation['display_price']); ?></span>
+                                    <div class="flex flex-col items-center">
+                                        <span class="font-medium text-black"><?php echo wc_price($variation['display_price']); ?></span>
                                     </div>
                                 </td>
                                 <td class="p-4 !border !border-gray-200">
                                     <input type="number" min="1" value="1" class="w-20 p-2 border rounded">
                                 </td>
                                 <td class="p-4 !border !border-gray-200">
-                                    <button class="add-to-cart bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors w-full" 
+                                    <button class="add-to-cart bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors w-full font-bold" 
                                             data-id="<?php echo $variation['variation_id']; ?>">
                                         ADD TO CART
                                     </button>
@@ -179,20 +181,20 @@ function wc_cart_template() {
                 </div>
             </div>
 
-            <div class="border-t p-4">
-                <div class="flex justify-between mb-2">
+            <div class="border-t p-3">
+                <div class="flex justify-between mb-1">
                     <span class="font-medium">Subtotal:</span>
                     <span id="cart-subtotal" class="font-medium">0.00</span>
                 </div>
-                <div class="flex justify-between mb-6">
+                <div class="flex justify-between mb-3">
                     <span class="font-medium">Total:</span>
                     <span id="cart-total" class="font-medium">0.00</span>
                 </div>
 
-                <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full bg-black text-white py-3  mb-3 hover:bg-black/80 text-center">
+                <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full max-w-[200px] mx-auto bg-black text-white py-2 mb-2 hover:bg-black/80 text-center font-bold">
                     CHECKOUT
                 </a>
-                <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full border border-gray-300 text-gray-700 py-3  hover:bg-gray-50 text-center">
+                <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full max-w-[200px] mx-auto border border-gray-300 text-gray-700 py-2 hover:bg-gray-50 text-center font-bold">
                     VIEW CART
                 </a>
             </div>
