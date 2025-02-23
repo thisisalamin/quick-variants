@@ -2,7 +2,12 @@
 module.exports = {
   content: [
     './**/*.php',
-    './assets/js/**/*.js',
+    './assets/**/*.js',
+    './assets/**/*.css',
+    './assets/**/*.html',
+    './assets/**/*.php',
+    './assets/css/**/*',
+    './assets/js/**/*'
   ],
   theme: {
     extend: {},
