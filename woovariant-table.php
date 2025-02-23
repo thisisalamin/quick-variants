@@ -100,11 +100,11 @@ function wc_product_table_shortcode($atts) {
                         </td>
                         <td class="p-4 !border !border-gray-200">
                             <?php if ($product->is_type('variable')): ?>
-                                <button class="toggle-variants bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors" data-id="<?php echo $product->get_id(); ?>">
+                                <button class="toggle-variants bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors w-full" data-id="<?php echo $product->get_id(); ?>">
                                     SHOW VARIANTS
                                 </button>
                             <?php else: ?>
-                                <button class="add-to-cart bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors" data-id="<?php echo $product->get_id(); ?>">
+                                <button class="add-to-cart bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors w-full" data-id="<?php echo $product->get_id(); ?>">
                                     ADD TO CART
                                 </button>
                             <?php endif; ?>
@@ -114,6 +114,12 @@ function wc_product_table_shortcode($atts) {
                     if ($product->is_type('variable')) {
                         $variations = $product->get_available_variations();
                         foreach ($variations as $variation) {
+                            // Skip if variation is out of stock or has no price/zero price
+                            if (!$variation['is_in_stock'] || 
+                                !isset($variation['display_price']) || 
+                                $variation['display_price'] <= 0) {
+                                continue;
+                            }
                             ?>
                             <tr class="variant-row variant-<?php echo $product->get_id(); ?> !border-b !border-gray-200 bg-gray-50">
                                 <td class="p-4 !border !border-gray-200">
@@ -131,7 +137,7 @@ function wc_product_table_shortcode($atts) {
                                     <input type="number" min="1" value="1" class="w-20 p-2 border rounded">
                                 </td>
                                 <td class="p-4 !border !border-gray-200">
-                                    <button class="add-to-cart bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors" 
+                                    <button class="add-to-cart bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors w-full" 
                                             data-id="<?php echo $variation['variation_id']; ?>">
                                         ADD TO CART
                                     </button>
@@ -176,17 +182,17 @@ function wc_cart_template() {
             <div class="border-t p-4">
                 <div class="flex justify-between mb-2">
                     <span class="font-medium">Subtotal:</span>
-                    <span id="cart-subtotal" class="font-medium">Rs.0.00</span>
+                    <span id="cart-subtotal" class="font-medium">0.00</span>
                 </div>
                 <div class="flex justify-between mb-6">
                     <span class="font-medium">Total:</span>
-                    <span id="cart-total" class="font-medium">Rs.0.00</span>
+                    <span id="cart-total" class="font-medium">0.00</span>
                 </div>
 
-                <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full bg-gray-900 text-white py-3 rounded-md mb-3 hover:bg-gray-800 text-center">
+                <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full bg-black text-white py-3  mb-3 hover:bg-black/80 text-center">
                     CHECKOUT
                 </a>
-                <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full border border-gray-300 text-gray-700 py-3 rounded-md hover:bg-gray-50 text-center">
+                <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full border border-gray-300 text-gray-700 py-3  hover:bg-gray-50 text-center">
                     VIEW CART
                 </a>
             </div>

@@ -23,7 +23,6 @@ jQuery(document).ready(function($) {
                     updateCartDisplay(response.data);
                     openCart();
                     
-                    // Replace single button with two buttons
                     buttonContainer.html(`
                         <button class="add-to-cart bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors mb-2 w-full" data-id="${productId}">
                             ADD MORE
@@ -61,7 +60,7 @@ jQuery(document).ready(function($) {
                 <div class="flex items-center space-x-4 cart-item" data-key="${item.key}">
                     <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover">
                     <div class="flex-1">
-                        <h3 class="font-medium">${item.name}</h3>
+                        <h4 class="font-medium">${item.name}</h4>
                         ${item.variation ? `<p class="text-sm text-gray-500">${item.variation}</p>` : ''}
                         <div class="flex items-center mt-2">
                             <input type="number" 
