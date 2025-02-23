@@ -1,0 +1,19 @@
+{
+  "name": "woovariant-table",
+  "version": "1.0.0",
+  "main": "tailwind.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tailwindcss -i ./assets/css/style.css -o ./assets/css/dist/style.css",
+    "watch": "tailwindcss -i ./assets/css/style.css -o ./assets/css/dist/style.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.8"
+  }
+}

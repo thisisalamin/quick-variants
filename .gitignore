@@ -1,0 +1,27 @@
+# Ignore WordPress core files
+/wp-admin/
+/wp-includes/
+
+# Ignore WordPress content directories
+/wp-content/cache/
+/wp-content/upgrade/
+/wp-content/uploads/
+
+# Ignore plugin-specific files
+*.log
+*.tmp
+*.bak
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE specific files
+.idea/
+.vscode/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore composer vendor directory
+vendor/
