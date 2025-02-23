@@ -102,7 +102,7 @@ function wc_product_table_shortcode($atts) {
                         </td>
                         <td class="p-4 !border !border-gray-200 text-center">
                             <?php if ($product->is_type('variable')): ?>
-                                <button class="toggle-variants bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors w-full max-w-[200px] mx-auto font-bold" data-id="<?php echo $product->get_id(); ?>">
+                                <button class="toggle-variants bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors w-full mx-auto font-bold" data-id="<?php echo $product->get_id(); ?>">
                                     SHOW VARIANTS
                                 </button>
                             <?php else: ?>
@@ -191,10 +191,10 @@ function wc_cart_template() {
                     <span id="cart-total" class="font-medium">0.00</span>
                 </div>
 
-                <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full max-w-[200px] mx-auto bg-black text-white py-2 mb-2 hover:bg-black/80 text-center font-bold">
+                <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full text-sm bg-black text-white py-1.5 mb-2 hover:bg-black/80 text-center font-bold">
                     CHECKOUT
                 </a>
-                <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full max-w-[200px] mx-auto border border-gray-300 text-gray-700 py-2 hover:bg-gray-50 text-center font-bold">
+                <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full text-sm border border-gray-300 text-gray-700 py-1.5 hover:bg-gray-50 text-center font-bold">
                     VIEW CART
                 </a>
             </div>
