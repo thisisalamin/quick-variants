@@ -66,7 +66,7 @@ jQuery(document).ready(function($) {
                             <input type="number" 
                                    value="${item.quantity}" 
                                    min="1" 
-                                   class="w-16 p-1 border rounded cart-qty-input">
+                                   class="w-16 p-1 border rounded cart-qty-input text-center">
                             <span class="ml-4">${item.price}</span>
                         </div>
                     </div>

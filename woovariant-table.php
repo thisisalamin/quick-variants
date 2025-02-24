@@ -195,10 +195,10 @@ function wc_cart_template() {
                     <span id="cart-total" class="font-medium">0.00</span>
                 </div>
 
-                <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full text-sm bg-black text-white py-1.5 mb-2 hover:bg-black/80 text-center font-bold">
+                <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full text-sm bg-black text-white py-2.5 mb-2 hover:bg-black/80 text-center font-bold">
                     CHECKOUT
                 </a>
-                <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full text-sm border border-gray-300 text-gray-700 py-1.5 hover:bg-gray-50 text-center font-bold">
+                <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full text-sm border border-gray-300 text-gray-700 py-2.5 hover:bg-gray-50 text-center font-bold">
                     VIEW CART
                 </a>
             </div>

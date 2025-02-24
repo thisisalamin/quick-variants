@@ -853,6 +853,11 @@ video {
   padding-bottom: 0.75rem;
 }
 
+.py-2\.5 {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+
 .text-left {
   text-align: left;
 }
