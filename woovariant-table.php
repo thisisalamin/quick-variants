@@ -97,7 +97,9 @@ function wc_product_table_shortcode($atts) {
                         </td>
                         <td class="p-4 !border !border-gray-200 text-center">
                             <?php if (!$product->is_type('variable')): ?>
-                                <input type="number" min="1" value="1" class="w-20 p-2 border rounded mx-auto">
+                                <div class="flex justify-center">
+                                    <input type="number" min="1" value="1" class="w-20 p-2 border rounded text-center">
+                                </div>
                             <?php endif; ?>
                         </td>
                         <td class="p-4 !border !border-gray-200 text-center">
@@ -136,7 +138,9 @@ function wc_product_table_shortcode($atts) {
                                     </div>
                                 </td>
                                 <td class="p-4 !border !border-gray-200">
-                                    <input type="number" min="1" value="1" class="w-20 p-2 border rounded">
+                                    <div class="flex justify-center">
+                                        <input type="number" min="1" value="1" class="w-20 p-2 border rounded text-center">
+                                    </div>
                                 </td>
                                 <td class="p-4 !border !border-gray-200">
                                     <button class="add-to-cart bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors w-full font-bold" 
