@@ -108,7 +108,7 @@ function wc_product_table_shortcode($atts) {
                                     SHOW VARIANTS
                                 </button>
                             <?php else: ?>
-                                <button class="add-to-cart bg-[#232323] text-white px-4 py-2.5 text-sm hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 w-full max-w-[200px] mx-auto font-bold" data-id="<?php echo $product->get_id(); ?>">
+                                <button class="add-to-cart bg-[#232323] text-white px-4 py-2.5 text-sm hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 w-full mx-auto font-bold" data-id="<?php echo $product->get_id(); ?>">
                                     ADD TO CART
                                 </button>
                             <?php endif; ?>
