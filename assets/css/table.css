@@ -157,7 +157,7 @@
 .show-more-button {
     background-color: #232323;
     color: white;
-    padding: 0.625rem 1rem;
+    padding: 0.500rem 1rem;
     font-size: 0.875rem;
     font-weight: 700;
     transition: all 0.3s ease;

@@ -174,7 +174,7 @@ function wc_product_table_shortcode($atts) {
                     <span style="width: 6%" class="pagination-total-item"></span>
                 </div>
             </div>
-            <div class="pagination-button mt-3">
+            <div class="pagination-button">
                 <a href="#" class="show-more-button">SHOW MORE</a>
             </div>
         </nav>
