@@ -198,6 +198,8 @@
         flex-wrap: wrap;
         align-items: stretch;
         border: 1px solid #e5e7eb;
+        position: relative;
+        padding: 10px;
     }
 
     td {
@@ -208,7 +210,10 @@
     /* Image column */
     tr > td:first-child {
         width: 40% !important;
-        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
     }
 
     tr > td:first-child img {
@@ -221,15 +226,15 @@
     tr > td:nth-child(2),
     tr > td:nth-child(3),
     tr > td:nth-child(5) {
-        width: 60%;
+        width: 60% !important;
+        margin-left: 40%;
     }
 
     /* Product name column */
     tr > td:nth-child(2) {
-        padding-bottom: 0 !important;
+        padding-bottom: 0.25rem !important;
         font-size: 13px !important;
         line-height: 1.4 !important;
-        margin-bottom: 4px;
     }
 
     /* Price and button container */
@@ -241,13 +246,21 @@
     }
 
     tr > td:nth-child(3) {
-        width: auto;
+        width: auto !important;
         font-size: 13px !important;
+        float: left;
     }
 
     tr > td:nth-child(5) {
-        flex: 1;
-        justify-content: flex-end;
+        float: right;
+        text-align: right;
+    }
+
+    /* Clear float */
+    tr > td:nth-child(5)::after {
+        content: '';
+        display: table;
+        clear: both;
     }
 
     /* Hide quantity column on mobile */
@@ -540,7 +553,7 @@
         width: 100% !important;
         border: 1px solid #e5e7eb !important;
         background: white !important;
-        text-align: center;
+        text-align: left;
     }
 
     .variant-row.show {
