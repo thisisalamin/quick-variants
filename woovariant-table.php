@@ -158,7 +158,7 @@ function wc_product_table_shortcode($atts) {
             </tbody>
         </table>
     </div>
-    <div class="pagination-wrapper text-center">
+    <!-- <div class="pagination-wrapper text-center">
         <nav class="pagination style--1 text-center" role="navigation" aria-label="Pagination">
             <div class="pagination-page-item pagination-page-total">
                 <div class="flex items-center justify-center gap-1 text-[16px] text-gray-600 mb-2">
@@ -178,7 +178,7 @@ function wc_product_table_shortcode($atts) {
                 <a href="#" class="show-more-button">SHOW MORE</a>
             </div>
         </nav>
-    </div>
+    </div> -->
     <?php
     return ob_get_clean();
 }
