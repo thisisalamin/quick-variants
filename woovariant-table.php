@@ -158,6 +158,27 @@ function wc_product_table_shortcode($atts) {
             </tbody>
         </table>
     </div>
+    <div class="pagination-wrapper text-center">
+        <nav class="pagination style--1 text-center" role="navigation" aria-label="Pagination">
+            <div class="pagination-page-item pagination-page-total">
+                <div class="flex items-center justify-center gap-1 text-[16px] text-gray-600 mb-2">
+                    <span>Showing</span>
+                    <span data-total-start="" class="font-medium">1</span>
+                    <span>-</span>
+                    <span data-total-end="" class="font-medium">10</span>
+                    <span>of</span>
+                    <span class="font-medium">30</span>
+                    <span>total</span>
+                </div>
+                <div class="pagination-total-progress">
+                    <span style="width: 6%" class="pagination-total-item"></span>
+                </div>
+            </div>
+            <div class="pagination-button mt-3">
+                <a href="#" class="show-more-button">SHOW MORE</a>
+            </div>
+        </nav>
+    </div>
     <?php
     return ob_get_clean();
 }
