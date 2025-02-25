@@ -25,21 +25,48 @@ function wc_product_table_enqueue_scripts() {
     wp_localize_script('wc-product-cart', 'wcCart', array(
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('wc_cart_nonce')
-    ));
+     ));
+    // Add new JavaScript for filtering
+    wp_enqueue_script('wc-product-filter', plugins_url('assets/js/filter.js', __FILE__), array('jquery'), '1.0', true);
 }
 add_action('wp_enqueue_scripts', 'wc_product_table_enqueue_scripts');
 
 // Shortcode to display product table
 function wc_product_table_shortcode($atts) {
-    // Extract shortcode attributes
     $atts = shortcode_atts(array(
-        'category' => '', // Category slug or ID
+        'category' => '',
     ), $atts);
 
     ob_start();
     ?>
+    <!-- Search and Filter Section -->
+    <div class="mb-6 search-filter-container">
+        <div class="search-filter-wrapper">
+            <input type="text" 
+                   id="product-search" 
+                   placeholder="Search products..." 
+                   class="search-input">
+            <div class="dropdown-filter">
+                <button id="filter-button" class="filter-btn">
+                    <span id="current-filter">All</span>
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div id="filter-dropdown" class="filter-dropdown">
+                    <button class="alphabet-filter active" data-letter="all">All</button>
+                    <?php
+                    foreach (range('A', 'Z') as $letter) {
+                        echo '<button class="alphabet-filter" data-letter="' . $letter . '">' . $letter . '</button>';
+                    }
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="overflow-x-auto">
-        <table class="min-w-full border-collapse !border !border-gray-200">
+        <table id="product-table" class="min-w-full border-collapse !border !border-gray-200">
             <!-- Table Header -->
             <thead>
                 <tr class="!border-b !border-gray-200 bg-[#FAFAFA]">
@@ -55,7 +82,9 @@ function wc_product_table_shortcode($atts) {
                 <?php
                 $args = array(
                     'post_type' => 'product',
-                    'posts_per_page' => -1
+                    'posts_per_page' => -1,
+                    'orderby' => 'title',
+                    'order' => 'ASC'
                 );
 
                 // Add category filter if specified
