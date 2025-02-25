@@ -1,23 +1,38 @@
 jQuery(document).ready(function($) {
+    // Hide all variant rows initially
+    $('.variant-row').hide();
+    
     $('.toggle-variants').on('click', function() {
         const productId = $(this).data('id');
-        const variantRows = $(`.variant-${productId}`);
-        const button = $(this);
-
-        if (variantRows.hasClass('show')) {
-            // Hide variants - faster transition
-            variantRows.removeClass('show');
-            setTimeout(() => {
-                variantRows.css('display', 'none');
-            }, 200); // Reduced from 300ms to 200ms to match CSS
-            button.text('SHOW VARIANTS');
+        const variantSelector = '.variant-' + productId;
+        const $variants = $(variantSelector);
+        const $button = $(this);
+        
+        if ($button.hasClass('active')) {
+            // Hide variants instantly without animation
+            $variants.hide();
+            $button.removeClass('active').text('SHOW VARIANTS');
         } else {
-            // Show variants
-            variantRows.css('display', 'table-row');
-            requestAnimationFrame(() => {
-                variantRows.addClass('show');
+            // Show variants with smooth animation
+            $variants.each(function(index) {
+                const $row = $(this);
+                // Set initial state before showing
+                $row.css({
+                    'opacity': 0,
+                    'display': 'table-row' // Explicitly set to table-row
+                });
+                
+                setTimeout(function() {
+                    $row.animate({
+                        opacity: 1
+                    }, {
+                        duration: 300,
+                        easing: 'swing'
+                    });
+                }, index * 50); // Staggered delay based on row index
             });
-            button.text('HIDE VARIANTS');
+            
+            $button.addClass('active').text('HIDE VARIANTS');
         }
     });
 
