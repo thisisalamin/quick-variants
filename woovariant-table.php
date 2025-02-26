@@ -79,7 +79,7 @@ function wc_product_table_shortcode($atts) {
             <!-- Table Header -->
             <thead>
                 <tr class="!border-b !border-gray-200 bg-[#FAFAFA]">
-                    <th class="p-4 text-center font-semibold !border !border-gray-200 w-24">IMAGES</th>
+                    <th style="width:120px !important" class="p-4 text-center font-semibold !border !border-gray-200">IMAGES</th>
                     <th class="p-4 text-left font-semibold !border !border-gray-200 w-[400px]">PRODUCT</th>
                     <th class="p-4 text-center font-semibold !border !border-gray-200">PRICE</th>
                     <th class="p-4 text-center font-semibold !border !border-gray-200">QTY</th>
@@ -258,19 +258,23 @@ function wc_ajax_load_more_products() {
     }
 
     $loop = new WP_Query($args);
-    $response = array('html' => '', 'has_more' => false);
+    $total_products = $loop->found_posts;
+    $response = array(
+        'html' => '',
+        'has_more' => false,
+        'total' => $total_products,
+        'current_page' => $page
+    );
 
     ob_start();
     while ($loop->have_posts()) : $loop->the_post();
         global $product;
-        // Include your product row HTML here
-        // This should be the same HTML structure as in your main shortcode
         include(plugin_dir_path(__FILE__) . 'templates/product-row.php');
     endwhile;
     wp_reset_postdata();
     
     $response['html'] = ob_get_clean();
-    $response['has_more'] = $loop->max_num_pages > $page;
+    $response['has_more'] = ($page * $per_page) < $total_products;
     
     wp_send_json_success($response);
 }
