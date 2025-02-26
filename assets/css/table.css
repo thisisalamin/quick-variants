@@ -76,12 +76,12 @@
 }
 
 .added-to-cart span.text-green-500 {
-    font-size: 0.75rem;
+    font-size: 14px;
     margin-top: 2px;
 }
 
 .added-status {
-    font-size: 0.75rem;
+    font-size: 14px;
     background-color: #22c55e;
 }
 
