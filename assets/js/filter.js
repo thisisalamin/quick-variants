@@ -1,5 +1,7 @@
 jQuery(document).ready(function($) {
-    const productTable = $('#product-table');
+    let searchTimeout;
+    const productTable = $('#product-table tbody');
+    const paginationWrapper = $('.pagination-wrapper');
     const searchInput = $('#product-search');
     const filterButton = $('#filter-button');
     const filterDropdown = $('#filter-dropdown');
@@ -22,7 +24,7 @@ jQuery(document).ready(function($) {
         }
     });
 
-    // Function to update product table
+    // Function to update products
     function updateProducts(searchTerm = '', letter = 'all') {
         $.ajax({
             url: wcFilter.ajaxUrl,
@@ -32,6 +34,7 @@ jQuery(document).ready(function($) {
                 nonce: wcFilter.nonce,
                 search: searchTerm,
                 letter: letter,
+                per_page: $('.show-more-button').data('per-page'),
                 category: $('#product-table').data('category') // Get category if set
             },
             beforeSend: function() {
@@ -39,9 +42,18 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    $('#product-table tbody').html(response.data.html);
-                    // Update total count if needed
-                    $('.pagination-page-total').find('[data-total-end]').text(response.data.count);
+                    productTable.html(response.data.html);
+                    
+                    // Show/hide pagination based on search/filter status
+                    if (response.data.show_pagination) {
+                        paginationWrapper.show();
+                        // Reset pagination display
+                        $('.pagination-page-total span[data-total-end]').text(
+                            Math.min($('.show-more-button').data('per-page'), response.data.total_products)
+                        );
+                    } else {
+                        paginationWrapper.hide();
+                    }
                 }
             },
             complete: function() {
@@ -50,25 +62,32 @@ jQuery(document).ready(function($) {
         });
     }
 
-    // Search input handler
+    // Search input handler with debounce
     $('#product-search').on('input', function() {
-        clearTimeout(searchTimer);
+        clearTimeout(searchTimeout);
         const searchTerm = $(this).val();
+        const activeLetter = $('.alphabet-filter.active').data('letter');
         
-        searchTimer = setTimeout(function() {
-            updateProducts(searchTerm, $('.alphabet-filter.active').data('letter'));
-        }, searchDelay);
+        searchTimeout = setTimeout(function() {
+            updateProducts(searchTerm, activeLetter);
+        }, 300);
+    });
+
+    // Clear search
+    $('#product-search').on('search', function() {
+        if ($(this).val() === '') {
+            updateProducts('', 'all');
+        }
     });
 
     // Alphabet filter handler
-    $('.alphabet-filter').on('click', function(e) {
-        e.preventDefault();
+    $('.alphabet-filter').click(function() {
         $('.alphabet-filter').removeClass('active');
         $(this).addClass('active');
         
-        updateProducts(
-            $('#product-search').val(),
-            $(this).data('letter')
-        );
+        const letter = $(this).data('letter');
+        const searchTerm = $('#product-search').val();
+        
+        updateProducts(searchTerm, letter);
     });
 });

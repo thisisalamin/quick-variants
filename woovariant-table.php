@@ -441,23 +441,31 @@ function wc_ajax_search_products() {
     $search_term = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
     $letter = isset($_POST['letter']) ? sanitize_text_field($_POST['letter']) : '';
     $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
+    $per_page = isset($_POST['per_page']) ? intval($_POST['per_page']) : 10;
 
     $args = array(
         'post_type' => 'product',
-        'posts_per_page' => -1,
         'orderby' => 'title',
         'order' => 'ASC'
     );
 
-    // Add search query
-    if (!empty($search_term)) {
-        $args['s'] = $search_term;
-    }
+    // Only show initial number of products if no search/filter is active
+    if (empty($search_term) && (empty($letter) || $letter === 'all')) {
+        $args['posts_per_page'] = $per_page;
+    } else {
+        // Show all filtered results
+        $args['posts_per_page'] = -1;
+        
+        // Add search query
+        if (!empty($search_term)) {
+            $args['s'] = $search_term;
+        }
 
-    // Add letter filter
-    if (!empty($letter) && $letter !== 'all') {
-        $args['title_filter'] = $letter;
-        add_filter('posts_where', 'filter_products_by_title_first_letter');
+        // Add letter filter
+        if (!empty($letter) && $letter !== 'all') {
+            set_query_var('title_filter', $letter); // Properly set the query var
+            add_filter('posts_where', 'filter_products_by_title_first_letter');
+        }
     }
 
     // Add category filter
@@ -476,7 +484,6 @@ function wc_ajax_search_products() {
     ob_start();
     while ($loop->have_posts()) : $loop->the_post();
         global $product;
-        // Include the same product row template
         include(plugin_dir_path(__FILE__) . 'templates/product-row.php');
     endwhile;
     wp_reset_postdata();
@@ -488,7 +495,9 @@ function wc_ajax_search_products() {
 
     wp_send_json_success(array(
         'html' => ob_get_clean(),
-        'count' => $loop->found_posts
+        'count' => $loop->found_posts,
+        'show_pagination' => empty($search_term) && (empty($letter) || $letter === 'all'),
+        'total_products' => $loop->found_posts
     ));
 }
 add_action('wp_ajax_search_products', 'wc_ajax_search_products');
@@ -499,7 +508,12 @@ function filter_products_by_title_first_letter($where) {
     global $wpdb;
     $title_filter = get_query_var('title_filter');
     if ($title_filter) {
-        $where .= $wpdb->prepare(" AND $wpdb->posts.post_title LIKE %s", $title_filter . '%');
+        // Add both uppercase and lowercase variants of the letter
+        $where .= $wpdb->prepare(
+            " AND (UPPER(SUBSTR($wpdb->posts.post_title, 1, 1)) = %s OR LOWER(SUBSTR($wpdb->posts.post_title, 1, 1)) = %s)",
+            strtoupper($title_filter),
+            strtolower($title_filter)
+        );
     }
     return $where;
 }
