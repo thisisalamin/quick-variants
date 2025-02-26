@@ -1,14 +1,10 @@
 .variant-row {
-    display: none;
+    display: none !important; /* Force hide by default */
     transition: background-color 0.3s ease;
 }
 
 .variant-row:hover {
     background-color: #f0f0f0;
-}
-
-.variant-row {
-    display: none;
 }
 
 /* Add transition for smooth toggling */
@@ -404,17 +400,18 @@
 
     /* Variant rows adjustments */
     .variant-row {
-        padding: 0.5rem;
-        margin: 0;
-        border-top: 1px solid #e5e7eb;
-        display: none; /* Hidden by default */
+        display: none !important; /* Reinforce hiding on mobile */
+        margin: 8px 0;
+        padding: 12px;
+        flex-direction: column;
+        align-items: center;
         width: 100%;
+        border: 1px solid #e5e7eb;
+        background: white;
     }
 
     .variant-row.show {
-        display: flex;
-        flex-wrap: wrap;
-        background-color: #f9fafb;
+        display: flex !important; /* Only show when .show class is present */
     }
 
     /* Variant image */
@@ -781,6 +778,146 @@
 
     .flex.flex-wrap.gap-2.justify-center {
         gap: 0.375rem;
+    }
+
+    /* New Variant Layout Fixes */
+    .variant-row {
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 12px !important;
+    }
+
+    .variant-row td {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        text-align: center !important;
+        padding: 4px 0 !important;
+    }
+
+    /* Variant title */
+    .variant-row td:nth-child(2) {
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+        margin: 8px 0 !important;
+        font-weight: 500 !important;
+        text-align: center !important;
+    }
+
+    /* Price styling */
+    .variant-row td:nth-child(3) {
+        justify-content: center !important;
+        margin: 4px 0 !important;
+    }
+
+    /* Button container */
+    .variant-row td:nth-child(5) {
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+        margin: 4px 0 !important;
+    }
+
+    /* Add to cart button */
+    .variant-row .add-to-cart {
+        margin: 0 auto !important;
+        min-width: 120px !important;
+    }
+
+    /* Bottom row layout */
+    .variant-row td:nth-child(3),
+    .variant-row td:nth-child(4),
+    .variant-row td:nth-child(5) {
+        margin: 4px 0 !important;
+        width: 100% !important;
+    }
+
+    /* Price and action row */
+    .variant-row td:last-child {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    /* Simplified Mobile Variant Layout */
+    .variant-row {
+        margin: 8px 0 !important;
+        padding: 12px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        width: 100% !important;
+        border: 1px solid #e5e7eb !important;
+        background: white !important;
+        box-sizing: border-box !important;
+    }
+
+    .variant-row.show {
+        display: flex !important;
+    }
+
+    /* Reset all TD styles first */
+    .variant-row td {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 4px 0 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        text-align: center !important;
+        position: static !important;
+        left: 0 !important;
+        float: none !important;
+    }
+
+    /* Variant title */
+    .variant-row td:nth-child(2) {
+        width: 100% !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        margin: 0 0 8px 0 !important;
+        font-weight: 500 !important;
+    }
+
+    /* Price styling */
+    .variant-row td:nth-child(3) {
+        width: 100% !important;
+        font-size: 14px !important;
+        margin: 4px 0 !important;
+        justify-content: center !important;
+    }
+
+    /* Button container */
+    .variant-row td:nth-child(5) {
+        width: 100% !important;
+        margin: 8px 0 4px 0 !important;
+        justify-content: center !important;
+    }
+
+    /* Add to cart button */
+    .variant-row .add-to-cart {
+        margin: 0 !important;
+        min-width: 120px !important;
+        font-size: 12px !important;
+    }
+
+    /* Remove all absolute positioning and transforms */
+    .variant-row,
+    .variant-row td,
+    .variant-row.show {
+        position: relative !important;
+        transform: none !important;
+        left: auto !important;
+    }
+
+    /* Center flex items */
+    .variant-row td .flex {
+        justify-content: center !important;
+        width: 100% !important;
     }
 }
 
@@ -1207,4 +1344,26 @@
 
 .loading .show-more-button {
     display: none;
+}
+
+/* Base variant styles - should be outside media queries */
+.variant-row {
+    display: none !important;
+}
+
+.variant-row.show {
+    display: table-row !important;
+}
+
+/* ...existing code... */
+
+@media (max-width: 767px) {
+    /* ...existing code... */
+    
+    /* Mobile variant display override */
+    .variant-row.show {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+    }
 }

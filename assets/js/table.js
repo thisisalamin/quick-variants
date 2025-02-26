@@ -1,29 +1,28 @@
 jQuery(document).ready(function($) {
-    // Replace any direct event binding with delegated events
+    // Hide all variants initially
+    $('.variant-row').hide().removeClass('show');
+    
+    // Toggle variants
     $(document).on('click', '.toggle-variants', function(e) {
         e.preventDefault();
-        const productId = $(this).data('id');
-        const variantRows = $('.variant-' + productId);
+        e.stopPropagation();
         
-        if (variantRows.is(':visible')) {
-            variantRows.hide();
-            $(this).text('SHOW VARIANTS');
+        const $button = $(this);
+        const productId = $button.data('id');
+        const $variants = $('.variant-' + productId);
+        
+        // Toggle show class and visibility
+        if ($variants.first().hasClass('show')) {
+            $variants.removeClass('show').hide();
+            $button.text('SHOW VARIANTS');
         } else {
-            variantRows.show();
-            $(this).text('HIDE VARIANTS');
+            $variants.addClass('show').show();
+            $button.text('HIDE VARIANTS');
         }
     });
 
-    // Hide all variant rows initially
-    $('.variant-row').hide();
-
-    // Function to initialize variant rows for new content
-    function initializeVariantRows() {
-        $('.variant-row').hide();
-    }
-
-    // Listen for custom event after content is loaded
+    // Handle new content
     $(document).on('productsLoaded', function() {
-        initializeVariantRows();
+        $('.variant-row').hide().removeClass('show');
     });
 });
