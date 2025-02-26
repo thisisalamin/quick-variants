@@ -81,9 +81,9 @@ function wc_product_table_shortcode($atts) {
                 <tr class="!border-b !border-gray-200 bg-[#FAFAFA]">
                     <th style="width:120px !important" class="p-4 text-center font-semibold !border !border-gray-200">IMAGES</th>
                     <th class="p-4 text-left font-semibold !border !border-gray-200 w-[400px]">PRODUCT</th>
-                    <th class="p-4 text-center font-semibold !border !border-gray-200">PRICE</th>
+                    <th style="width:220px !important" class="p-4 text-center font-semibold !border !border-gray-200">PRICE</th>
                     <th class="p-4 text-center font-semibold !border !border-gray-200">QTY</th>
-                    <th class="p-4 text-center font-semibold !border !border-gray-200">OPTIONS</th>
+                    <th style="width:220px !important" class="text-center font-semibold !border !border-gray-200">OPTIONS</th>
                 </tr>
             </thead>
             <!-- Table Body -->
