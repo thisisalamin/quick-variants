@@ -777,7 +777,6 @@
 
 .search-input {
     width: 100%;
-    max-width: 600px;
     padding: 1rem 1.25rem;
     background: #ffffff;
     border: 2px solid #e5e7eb;
@@ -905,12 +904,13 @@
 
     .search-filter-wrapper {
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 1rem;
     }
 
     .search-input {
         width: 100%;
-        padding: 0.5rem 1rem;
+        max-width: 100%;
+        padding: 0.875rem 1rem;
     }
 
     .dropdown-filter {
@@ -931,4 +931,214 @@
     .filter-dropdown.show {
         grid-template-columns: repeat(5, 1fr);
     }
+}
+
+.alphabet-filter-container {
+    background: #fff;
+    border-radius: 0.375rem;
+}
+
+.alphabet-filter {
+    min-width: 40px;
+    text-align: center;
+    background: white;
+    border-color: #e5e7eb;
+}
+
+.alphabet-filter.active {
+    background: #232323;
+    color: white;
+    border-color: #232323;
+}
+
+.alphabet-filter:hover:not(.active) {
+    background: #f3f4f6;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #232323;
+    box-shadow: 0 0 0 1px #232323;
+}
+
+.search-filter-container {
+    background: #ffffff;
+    padding: 1.25rem;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 2rem;
+    position: relative;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search-filter-wrapper {
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    background: #ffffff;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 1rem 1.25rem;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 4px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #111827;
+    transition: all 0.2s ease;
+    margin: 0 auto;
+    display: block;
+}
+
+/* Modern Search and Filter Section */
+.search-filter-container {
+    background: #ffffff;
+    padding: 20px;
+    margin-bottom: 32px;
+    position: relative;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search-filter-wrapper {
+    width: 100%;
+    background: #ffffff;
+    position: relative;
+}
+
+.search-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.search-input-wrapper {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 16px 20px;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #111827;
+    transition: all 0.2s ease;
+}
+
+.search-input:hover {
+    border-color: #d1d5db;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #232323;
+    box-shadow: 0 0 0 1px #232323;
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.alphabet-filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 8px;
+}
+
+.alphabet-filter {
+    padding: 10px 16px;
+    border: 2px solid #eef0f2;
+    border-radius: 8px;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    min-width: 42px;
+    text-align: center;
+    color: #1e293b;
+    font-size: 15px;
+}
+
+.alphabet-filter:hover {
+    background-color: #f8fafc;
+    border-color: #232323;
+    color: #232323;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.alphabet-filter.active {
+    background-color: #232323;
+    color: white;
+    border-color: #232323;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 640px) {
+    .search-filter-container {
+        padding: 16px;
+        margin: 0 16px 32px 16px;
+    }
+
+    .search-section {
+        gap: 16px;
+    }
+
+    .search-input {
+        padding: 14px 16px;
+        font-size: 14px;
+    }
+
+    .alphabet-filter {
+        padding: 8px;
+        min-width: 36px;
+        font-size: 14px;
+    }
+
+    .alphabet-filter-container {
+        gap: 6px;
+    }
+}
+
+/* Add loading state styles */
+.loading {
+    opacity: 0.5;
+    pointer-events: none;
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #232323;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
 }

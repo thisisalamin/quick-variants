@@ -6,6 +6,8 @@ jQuery(document).ready(function($) {
     const alphabetFilters = $('.alphabet-filter');
     const currentFilter = $('#current-filter');
     let currentLetter = 'all';
+    let searchTimer;
+    const searchDelay = 500; // Delay in milliseconds
 
     // Toggle dropdown
     filterButton.on('click', function(e) {
@@ -20,53 +22,53 @@ jQuery(document).ready(function($) {
         }
     });
 
-    // Search functionality
-    searchInput.on('input', function() {
-        filterProducts();
-    });
-
-    // Alphabet filter functionality
-    alphabetFilters.on('click', function() {
-        const letter = $(this).data('letter');
-        alphabetFilters.removeClass('active');
-        $(this).addClass('active');
-        currentLetter = letter;
-        currentFilter.text(letter === 'all' ? 'All' : letter);
-        filterDropdown.removeClass('show');
-        filterProducts();
-    });
-
-    // Filter products function
-    function filterProducts() {
-        const searchTerm = searchInput.val().toLowerCase();
-        const productRows = productTable.find('tbody > tr:not(.variant-row)');
-
-        productRows.each(function() {
-            const row = $(this);
-            const productName = row.find('td:nth-child(2)').text().toLowerCase();
-            const variantRows = row.nextUntil('tr:not(.variant-row)');
-            
-            let showRow = true;
-
-            // Search filter
-            if (searchTerm && !productName.includes(searchTerm)) {
-                showRow = false;
-            }
-
-            // Alphabet filter
-            if (currentLetter !== 'all') {
-                if (!productName.startsWith(currentLetter.toLowerCase())) {
-                    showRow = false;
+    // Function to update product table
+    function updateProducts(searchTerm = '', letter = 'all') {
+        $.ajax({
+            url: wcFilter.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'search_products',
+                nonce: wcFilter.nonce,
+                search: searchTerm,
+                letter: letter,
+                category: $('#product-table').data('category') // Get category if set
+            },
+            beforeSend: function() {
+                $('#product-table tbody').addClass('loading');
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#product-table tbody').html(response.data.html);
+                    // Update total count if needed
+                    $('.pagination-page-total').find('[data-total-end]').text(response.data.count);
                 }
-            }
-
-            // Show/hide the product row and its variants
-            row.toggle(showRow);
-            variantRows.hide();
-            
-            if (showRow && row.hasClass('expanded')) {
-                variantRows.show();
+            },
+            complete: function() {
+                $('#product-table tbody').removeClass('loading');
             }
         });
     }
+
+    // Search input handler
+    $('#product-search').on('input', function() {
+        clearTimeout(searchTimer);
+        const searchTerm = $(this).val();
+        
+        searchTimer = setTimeout(function() {
+            updateProducts(searchTerm, $('.alphabet-filter.active').data('letter'));
+        }, searchDelay);
+    });
+
+    // Alphabet filter handler
+    $('.alphabet-filter').on('click', function(e) {
+        e.preventDefault();
+        $('.alphabet-filter').removeClass('active');
+        $(this).addClass('active');
+        
+        updateProducts(
+            $('#product-search').val(),
+            $(this).data('letter')
+        );
+    });
 });

@@ -28,6 +28,10 @@ function wc_product_table_enqueue_scripts() {
      ));
     // Add new JavaScript for filtering
     wp_enqueue_script('wc-product-filter', plugins_url('assets/js/filter.js', __FILE__), array('jquery'), '1.0', true);
+    wp_localize_script('wc-product-filter', 'wcFilter', array(
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('wc_filter_nonce')
+    ));
 }
 add_action('wp_enqueue_scripts', 'wc_product_table_enqueue_scripts');
 
@@ -48,20 +52,17 @@ function wc_product_table_shortcode($atts) {
     ob_start();
     ?>
     <!-- Search and Filter Section -->
-    <div class="mb-6 search-filter-container">
+    <div class="search-filter-container">
         <div class="search-filter-wrapper">
-            <input type="text" 
-                   id="product-search" 
-                   placeholder="Search products..." 
-                   class="search-input">
-            <div class="dropdown-filter">
-                <button id="filter-button" class="filter-btn">
-                    <span id="current-filter">All</span>
-                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
-                <div id="filter-dropdown" class="filter-dropdown">
+            <div class="search-section">
+                <div class="search-input-wrapper">
+                    <input type="text" 
+                           id="product-search" 
+                           placeholder="Search products..." 
+                           class="search-input">
+                </div>
+                
+                <div class="alphabet-filter-container">
                     <button class="alphabet-filter active" data-letter="all">All</button>
                     <?php
                     foreach (range('A', 'Z') as $letter) {
@@ -432,3 +433,73 @@ function wc_ajax_remove_from_cart() {
 }
 add_action('wp_ajax_remove_from_cart', 'wc_ajax_remove_from_cart');
 add_action('wp_ajax_nopriv_remove_from_cart', 'wc_ajax_remove_from_cart');
+
+// Add this new AJAX handler function
+function wc_ajax_search_products() {
+    check_ajax_referer('wc_filter_nonce', 'nonce');
+    
+    $search_term = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
+    $letter = isset($_POST['letter']) ? sanitize_text_field($_POST['letter']) : '';
+    $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
+
+    $args = array(
+        'post_type' => 'product',
+        'posts_per_page' => -1,
+        'orderby' => 'title',
+        'order' => 'ASC'
+    );
+
+    // Add search query
+    if (!empty($search_term)) {
+        $args['s'] = $search_term;
+    }
+
+    // Add letter filter
+    if (!empty($letter) && $letter !== 'all') {
+        $args['title_filter'] = $letter;
+        add_filter('posts_where', 'filter_products_by_title_first_letter');
+    }
+
+    // Add category filter
+    if (!empty($category)) {
+        $args['tax_query'] = array(
+            array(
+                'taxonomy' => 'product_cat',
+                'field' => 'slug',
+                'terms' => explode(',', $category)
+            )
+        );
+    }
+
+    $loop = new WP_Query($args);
+    
+    ob_start();
+    while ($loop->have_posts()) : $loop->the_post();
+        global $product;
+        // Include the same product row template
+        include(plugin_dir_path(__FILE__) . 'templates/product-row.php');
+    endwhile;
+    wp_reset_postdata();
+
+    // Remove the letter filter if it was added
+    if (!empty($letter) && $letter !== 'all') {
+        remove_filter('posts_where', 'filter_products_by_title_first_letter');
+    }
+
+    wp_send_json_success(array(
+        'html' => ob_get_clean(),
+        'count' => $loop->found_posts
+    ));
+}
+add_action('wp_ajax_search_products', 'wc_ajax_search_products');
+add_action('wp_ajax_nopriv_search_products', 'wc_ajax_search_products');
+
+// Helper function for letter filtering
+function filter_products_by_title_first_letter($where) {
+    global $wpdb;
+    $title_filter = get_query_var('title_filter');
+    if ($title_filter) {
+        $where .= $wpdb->prepare(" AND $wpdb->posts.post_title LIKE %s", $title_filter . '%');
+    }
+    return $where;
+}
