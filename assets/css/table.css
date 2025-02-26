@@ -1103,7 +1103,7 @@
 }
 
 .alphabet-filter {
-    padding: 10px 16px;
+    padding: 10px 10px;
     border: 2px solid #eef0f2;
     border-radius: 8px;
     background-color: #ffffff;
@@ -1113,7 +1113,7 @@
     min-width: 42px;
     text-align: center;
     color: #1e293b;
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .alphabet-filter:hover {
