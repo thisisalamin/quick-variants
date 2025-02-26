@@ -29,6 +29,9 @@ jQuery(document).ready(function($) {
                     // Append new products
                     $('#product-table tbody').append(response.data.html);
                     
+                    // Trigger custom event after content is loaded
+                    $(document).trigger('productsLoaded');
+                    
                     // Update pagination counter
                     const startCount = 1;
                     const endCount = Math.min((currentPage + 1) * perPage, total);

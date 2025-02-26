@@ -1,30 +1,29 @@
 jQuery(document).ready(function($) {
-    function initializeVariantToggles() {
-        // First remove any existing click handlers to prevent duplicates
-        $('.toggle-variants').off('click');
+    // Replace any direct event binding with delegated events
+    $(document).on('click', '.toggle-variants', function(e) {
+        e.preventDefault();
+        const productId = $(this).data('id');
+        const variantRows = $('.variant-' + productId);
         
-        // Add new click handlers
-        $('.toggle-variants').on('click', function() {
-            const productId = $(this).data('id');
-            const variantRows = $(`.variant-${productId}`);
-            const button = $(this);
-            
-            // Store the visibility state
-            const isVisible = !variantRows.is(':visible');
-            
-            // Toggle visibility with animation
-            variantRows.slideToggle(200, function() {
-                // Update button text based on final state
-                button.text(isVisible ? 'HIDE VARIANTS' : 'SHOW VARIANTS');
-            });
-        });
+        if (variantRows.is(':visible')) {
+            variantRows.hide();
+            $(this).text('SHOW VARIANTS');
+        } else {
+            variantRows.show();
+            $(this).text('HIDE VARIANTS');
+        }
+    });
+
+    // Hide all variant rows initially
+    $('.variant-row').hide();
+
+    // Function to initialize variant rows for new content
+    function initializeVariantRows() {
+        $('.variant-row').hide();
     }
 
-    // Initialize on page load
-    initializeVariantToggles();
-
-    // Reinitialize after any content update
-    $(document).on('wc_product_table_updated', function() {
-        initializeVariantToggles();
+    // Listen for custom event after content is loaded
+    $(document).on('productsLoaded', function() {
+        initializeVariantRows();
     });
 });
