@@ -25,7 +25,7 @@ jQuery(document).ready(function($) {
     });
 
     // Function to update products
-    function updateProducts(searchTerm = '', letter = 'all') {
+    function updateProducts(searchTerm = '', letter = '') {
         $.ajax({
             url: wcFilter.ajaxUrl,
             type: 'POST',
@@ -43,6 +43,8 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     productTable.html(response.data.html);
+                    // Trigger our custom event after updating content
+                    $(document).trigger('wc_product_table_updated');
                     
                     // Show/hide pagination based on search/filter status
                     if (response.data.show_pagination) {
@@ -60,6 +62,15 @@ jQuery(document).ready(function($) {
                 $('#product-table tbody').removeClass('loading');
             }
         });
+    }
+
+    function updateProductTable(response) {
+        if (response.success) {
+            $('#product-table tbody').html(response.data.html);
+            updatePagination(response.data);
+            // Trigger custom event after content update
+            $(document).trigger('wc_product_table_updated');
+        }
     }
 
     // Search input handler with debounce

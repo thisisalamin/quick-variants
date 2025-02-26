@@ -7,6 +7,21 @@
     background-color: #f0f0f0;
 }
 
+.variant-row {
+    display: none;
+}
+
+/* Add transition for smooth toggling */
+.variant-row.showing {
+    display: table-row;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 #slide-cart {
     position: fixed;
     top: 0;
@@ -77,6 +92,7 @@
 .toggle-variants {
     position: relative;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .toggle-variants:after {
@@ -93,6 +109,12 @@
 
 .toggle-variants:hover:after {
     opacity: 1;
+}
+
+/* Prevent layout shifts during animation */
+#product-table {
+    width: 100%;
+    table-layout: fixed;
 }
 
 /* Pagination styles */
@@ -157,7 +179,7 @@
 .show-more-button {
     background-color: #232323;
     color: white;
-    padding: 0.500rem 1rem;
+    padding: 12px 0; /* Adjust padding to account for button-content padding */
     font-size: 0.875rem;
     font-weight: 700;
     transition: all 0.3s ease;
@@ -166,12 +188,31 @@
     width: 100%;
     max-width: 200px;
     border: 1px solid transparent;
+    position: relative;
 }
 
-.show-more-button:hover {
-    background-color: white;
-    color: #232323;
-    border-color: #232323;
+.button-content {
+    display: flex;
+    align-items: center; /* This ensures vertical centering */
+    justify-content: center;
+    gap: 10px;
+    padding: 0 15px;
+    min-height: 100%; /* This ensures full height */
+}
+
+.loader {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: none;
+    margin: auto 0; /* This helps with vertical centering */
+}
+
+.loading .loader {
+    display: inline-block;
 }
 
 /* Filter button styles */
@@ -1119,26 +1160,42 @@
 
 /* Add loading state styles */
 .loading {
-    opacity: 0.5;
-    pointer-events: none;
-    position: relative;
+    opacity: 1;
 }
 
 .loading::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 30px;
-    height: 30px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #232323;
+    display: none;
+}
+
+.loader {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #232323;
     border-radius: 50%;
     animation: spin 1s linear infinite;
+    display: none;
+    position: static; /* Remove absolute positioning */
+    margin: auto 0; /* This helps with vertical centering */
+}
+
+.loading .loader {
+    display: block;
+}
+
+.loading .button-text {
+    visibility: visible; /* Keep text visible while loading */
 }
 
 @keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading .loader {
+    display: block;
+}
+
+.loading .show-more-button {
+    display: none;
 }

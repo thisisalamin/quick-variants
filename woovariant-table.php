@@ -216,7 +216,12 @@ function wc_product_table_shortcode($atts) {
             </div>
             <?php if ($total_products > $atts['per_page']): ?>
             <div class="pagination-button">
-                <a href="#" class="show-more-button" data-page="1" data-per-page="<?php echo $atts['per_page']; ?>" data-total="<?php echo $total_products; ?>">SHOW MORE</a>
+                <a href="#" class="show-more-button" data-page="1" data-per-page="<?php echo $atts['per_page']; ?>" data-total="<?php echo $total_products; ?>">
+                    <div class="button-content">
+                        <span class="loader"></span>
+                        <span class="button-text">SHOW MORE</span>
+                    </div>
+                </a>
             </div>
             <?php endif; ?>
         </nav>

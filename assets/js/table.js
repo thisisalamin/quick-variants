@@ -1,45 +1,30 @@
 jQuery(document).ready(function($) {
-    // Hide all variant rows initially
-    $('.variant-row').hide();
-    
-    $('.toggle-variants').on('click', function() {
-        const productId = $(this).data('id');
-        const variantSelector = '.variant-' + productId;
-        const $variants = $(variantSelector);
-        const $button = $(this);
+    function initializeVariantToggles() {
+        // First remove any existing click handlers to prevent duplicates
+        $('.toggle-variants').off('click');
         
-        if ($button.hasClass('active')) {
-            // Hide variants instantly without animation
-            $variants.hide();
-            $button.removeClass('active').text('SHOW VARIANTS');
-        } else {
-            // Show variants with smooth animation
-            $variants.each(function(index) {
-                const $row = $(this);
-                // Set initial state before showing
-                $row.css({
-                    'opacity': 0,
-                    'display': 'table-row' // Explicitly set to table-row
-                });
-                
-                setTimeout(function() {
-                    $row.animate({
-                        opacity: 1
-                    }, {
-                        duration: 300,
-                        easing: 'swing'
-                    });
-                }, index * 50); // Staggered delay based on row index
-            });
+        // Add new click handlers
+        $('.toggle-variants').on('click', function() {
+            const productId = $(this).data('id');
+            const variantRows = $(`.variant-${productId}`);
+            const button = $(this);
             
-            $button.addClass('active').text('HIDE VARIANTS');
-        }
-    });
+            // Store the visibility state
+            const isVisible = !variantRows.is(':visible');
+            
+            // Toggle visibility with animation
+            variantRows.slideToggle(200, function() {
+                // Update button text based on final state
+                button.text(isVisible ? 'HIDE VARIANTS' : 'SHOW VARIANTS');
+            });
+        });
+    }
 
-    // Handle add to cart functionality
-    $('.add-to-cart').on('click', function() {
-        const productId = $(this).data('id');
-        const quantity = $(this).closest('tr').find('input[type="number"]').val();
-        // Add your add to cart logic here
+    // Initialize on page load
+    initializeVariantToggles();
+
+    // Reinitialize after any content update
+    $(document).on('wc_product_table_updated', function() {
+        initializeVariantToggles();
     });
 });

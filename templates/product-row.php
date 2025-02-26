@@ -1,4 +1,7 @@
-<tr class="!border-b !border-gray-200">
+<?php
+global $product;
+?>
+<tr class="!border-b !border-gray-200" data-product-id="<?php echo $product->get_id(); ?>">
     <td class="p-4 !border !border-gray-200 w-24 text-center">
         <?php 
         $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
@@ -40,7 +43,37 @@
 </tr>
 <?php
 if ($product->is_type('variable')) {
-    // Include variation rows
-    include(plugin_dir_path(__FILE__) . 'variation-rows.php');
+    $variations = $product->get_available_variations();
+    foreach ($variations as $variation) {
+        if (!$variation['is_in_stock'] || !isset($variation['display_price']) || $variation['display_price'] <= 0) {
+            continue;
+        }
+        ?>
+        <tr class="variant-row variant-<?php echo $product->get_id(); ?> !border-b !border-gray-200 bg-gray-50" style="display: none;">
+            <td class="p-4 !border !border-gray-200">
+                <img src="<?php echo esc_url($variation['image']['url']); ?>" 
+                     alt="<?php echo esc_attr($variation['variation_description']); ?>"
+                     class="w-20 h-20 object-contain" />
+            </td>
+            <td class="p-4 !border !border-gray-200"><?php echo strtoupper(implode(', ', $variation['attributes'])); ?></td>
+            <td class="p-4 !border !border-gray-200">
+                <div class="flex flex-col items-center">
+                    <span class="font-medium text-black"><?php echo wc_price($variation['display_price']); ?></span>
+                </div>
+            </td>
+            <td class="p-4 !border !border-gray-200">
+                <div class="flex justify-center">
+                    <input type="number" min="1" value="1" class="w-20 p-2 border rounded text-center">
+                </div>
+            </td>
+            <td class="p-4 !border !border-gray-200">
+                <button class="add-to-cart bg-[#232323] text-white px-4 py-2.5 text-sm hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 w-full font-bold" 
+                        data-id="<?php echo $variation['variation_id']; ?>">
+                    ADD TO CART
+                </button>
+            </td>
+        </tr>
+        <?php
+    }
 }
 ?>
