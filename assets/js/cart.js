@@ -27,7 +27,7 @@ jQuery(document).ready(function($) {
                         <button class="add-to-cart bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors mb-2 w-full font-bold" data-id="${productId}">
                             ADD MORE
                         </button>
-                        <div class="added-status bg-green-500 text-white px-4 py-2 text-sm text-center w-full font-bold">
+                        <div class="added-status bg-green-500 text-white px-4 py-2 text-center w-full font-bold">
                             ADDED
                         </div>
                     `);

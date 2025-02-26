@@ -201,7 +201,7 @@ function wc_product_table_shortcode($atts) {
     <div class="pagination-wrapper text-center">
         <nav class="pagination style--1 text-center" role="navigation" aria-label="Pagination">
             <div class="pagination-page-item pagination-page-total">
-                <div class="flex items-center justify-center gap-1 text-[16px] text-gray-600 mb-2">
+                <div class="flex items-center justify-center gap-1 text-gray-600 mb-2">
                     <span>Showing</span>
                     <span data-total-start="1" class="font-medium">1</span>
                     <span>-</span>

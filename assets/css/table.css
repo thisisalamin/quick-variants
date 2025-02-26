@@ -115,6 +115,15 @@
 #product-table {
     width: 100%;
     table-layout: fixed;
+    font-size: 16px;
+}
+
+#product-table th {
+    font-size: 16px;
+}
+
+#product-table td {
+    font-size: 16px;
 }
 
 /* Pagination styles */
@@ -131,7 +140,7 @@
 }
 
 .pagination-page-item {
-    font-size: 0.875rem;
+    font-size: 16px;
     color: #4B5563;
     display: flex;
     align-items: center;
