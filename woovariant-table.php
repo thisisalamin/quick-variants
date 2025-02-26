@@ -35,7 +35,15 @@ add_action('wp_enqueue_scripts', 'wc_product_table_enqueue_scripts');
 function wc_product_table_shortcode($atts) {
     $atts = shortcode_atts(array(
         'category' => '',
+        'per_page' => 10, // Default products per page
     ), $atts);
+
+    // Add pagination script
+    wp_enqueue_script('wc-product-pagination', plugins_url('assets/js/pagination.js', __FILE__), array('jquery'), '1.0', true);
+    wp_localize_script('wc-product-pagination', 'wcPagination', array(
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('wc_pagination_nonce')
+    ));
 
     ob_start();
     ?>
@@ -82,7 +90,7 @@ function wc_product_table_shortcode($atts) {
                 <?php
                 $args = array(
                     'post_type' => 'product',
-                    'posts_per_page' => -1,
+                    'posts_per_page' => $atts['per_page'],
                     'orderby' => 'title',
                     'order' => 'ASC'
                 );
@@ -99,6 +107,8 @@ function wc_product_table_shortcode($atts) {
                 }
 
                 $loop = new WP_Query($args);
+                $total_products = $loop->found_posts;
+
                 while ($loop->have_posts()) : $loop->the_post();
                     global $product;
                     ?>
@@ -187,31 +197,79 @@ function wc_product_table_shortcode($atts) {
             </tbody>
         </table>
     </div>
-    <!-- <div class="pagination-wrapper text-center">
+    <div class="pagination-wrapper text-center">
         <nav class="pagination style--1 text-center" role="navigation" aria-label="Pagination">
             <div class="pagination-page-item pagination-page-total">
                 <div class="flex items-center justify-center gap-1 text-[16px] text-gray-600 mb-2">
                     <span>Showing</span>
-                    <span data-total-start="" class="font-medium">1</span>
+                    <span data-total-start="1" class="font-medium">1</span>
                     <span>-</span>
-                    <span data-total-end="" class="font-medium">10</span>
+                    <span data-total-end="<?php echo min($atts['per_page'], $total_products); ?>" class="font-medium"><?php echo min($atts['per_page'], $total_products); ?></span>
                     <span>of</span>
-                    <span class="font-medium">30</span>
+                    <span class="font-medium"><?php echo $total_products; ?></span>
                     <span>total</span>
                 </div>
                 <div class="pagination-total-progress">
-                    <span style="width: 6%" class="pagination-total-item"></span>
+                    <span style="width: <?php echo ($atts['per_page'] / $total_products) * 100; ?>%" class="pagination-total-item"></span>
                 </div>
             </div>
+            <?php if ($total_products > $atts['per_page']): ?>
             <div class="pagination-button">
-                <a href="#" class="show-more-button">SHOW MORE</a>
+                <a href="#" class="show-more-button" data-page="1" data-per-page="<?php echo $atts['per_page']; ?>" data-total="<?php echo $total_products; ?>">SHOW MORE</a>
             </div>
+            <?php endif; ?>
         </nav>
-    </div> -->
+    </div>
     <?php
     return ob_get_clean();
 }
 add_shortcode('wc_product_table', 'wc_product_table_shortcode');
+
+// Add AJAX handler for loading more products
+function wc_ajax_load_more_products() {
+    check_ajax_referer('wc_pagination_nonce', 'nonce');
+    
+    $page = isset($_POST['page']) ? intval($_POST['page']) : 1;
+    $per_page = isset($_POST['per_page']) ? intval($_POST['per_page']) : 10;
+    $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
+
+    $args = array(
+        'post_type' => 'product',
+        'posts_per_page' => $per_page,
+        'paged' => $page,
+        'orderby' => 'title',
+        'order' => 'ASC'
+    );
+
+    if (!empty($category)) {
+        $args['tax_query'] = array(
+            array(
+                'taxonomy' => 'product_cat',
+                'field' => 'slug',
+                'terms' => explode(',', $category)
+            )
+        );
+    }
+
+    $loop = new WP_Query($args);
+    $response = array('html' => '', 'has_more' => false);
+
+    ob_start();
+    while ($loop->have_posts()) : $loop->the_post();
+        global $product;
+        // Include your product row HTML here
+        // This should be the same HTML structure as in your main shortcode
+        include(plugin_dir_path(__FILE__) . 'templates/product-row.php');
+    endwhile;
+    wp_reset_postdata();
+    
+    $response['html'] = ob_get_clean();
+    $response['has_more'] = $loop->max_num_pages > $page;
+    
+    wp_send_json_success($response);
+}
+add_action('wp_ajax_load_more_products', 'wc_ajax_load_more_products');
+add_action('wp_ajax_nopriv_load_more_products', 'wc_ajax_load_more_products');
 
 function wc_cart_template() {
     ?>
