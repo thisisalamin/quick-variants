@@ -26,6 +26,8 @@ jQuery(document).ready(function($) {
 
     // Function to update products
     function updateProducts(searchTerm = '', letter = '') {
+        const perPage = $('#product-table').data('per-page');
+        
         $.ajax({
             url: wcFilter.ajaxUrl,
             type: 'POST',
@@ -35,7 +37,7 @@ jQuery(document).ready(function($) {
                 search: searchTerm,
                 letter: letter,
                 per_page: $('.show-more-button').data('per-page'),
-                category: $('#product-table').data('category') // Get category if set
+                category: wcFilter.category // Always use the category from shortcode
             },
             beforeSend: function() {
                 $('#product-table tbody').addClass('loading');
@@ -49,10 +51,24 @@ jQuery(document).ready(function($) {
                     // Show/hide pagination based on search/filter status
                     if (response.data.show_pagination) {
                         paginationWrapper.show();
-                        // Reset pagination display
-                        $('.pagination-page-total span[data-total-end]').text(
-                            Math.min($('.show-more-button').data('per-page'), response.data.total_products)
-                        );
+                        
+                        // Update pagination numbers
+                        const totalProducts = response.data.total_products;
+                        const currentEnd = Math.min(perPage, totalProducts);
+                        
+                        $('[data-total-start]').text('1');
+                        $('[data-total-end]').text(currentEnd);
+                        $('.pagination-page-total .font-medium:last').text(totalProducts);
+                        
+                        // Update progress bar
+                        const progressPercentage = (currentEnd / totalProducts) * 100;
+                        $('.pagination-total-item').css('width', progressPercentage + '%');
+                        
+                        // Update show more button
+                        $('.show-more-button')
+                            .data('total', totalProducts)
+                            .data('page', 1)
+                            .data('per-page', perPage);
                     } else {
                         paginationWrapper.hide();
                     }
@@ -101,4 +117,19 @@ jQuery(document).ready(function($) {
         
         updateProducts(searchTerm, letter);
     });
+
+    function performSearch(searchTerm, letter) {
+        $.ajax({
+            url: wcFilter.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'search_products',
+                nonce: wcFilter.nonce,
+                search: searchTerm,
+                letter: letter,
+                category: wcFilter.category // Always include the category
+            },
+            // ... rest of the function ...
+        });
+    }
 });

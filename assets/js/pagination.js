@@ -22,7 +22,7 @@ jQuery(document).ready(function($) {
                 nonce: wcPagination.nonce,
                 page: currentPage + 1,
                 per_page: perPage,
-                category: button.data('category')
+                category: wcPagination.category // Always include the category
             },
             success: function(response) {
                 if (response.success) {

@@ -39,14 +39,51 @@ add_action('wp_enqueue_scripts', 'wc_product_table_enqueue_scripts');
 function wc_product_table_shortcode($atts) {
     $atts = shortcode_atts(array(
         'category' => '',
-        'per_page' => 10, // Default products per page
+        'per_page' => 10,
     ), $atts);
 
-    // Add pagination script
-    wp_enqueue_script('wc-product-pagination', plugins_url('assets/js/pagination.js', __FILE__), array('jquery'), '1.0', true);
+    // Get total products count first
+    $args = array(
+        'post_type' => 'product',
+        'posts_per_page' => -1, // Get all products for counting
+        'orderby' => 'title',
+        'order' => 'ASC'
+    );
+
+    // Add category filter if specified
+    if (!empty($atts['category'])) {
+        $args['tax_query'] = array(
+            array(
+                'taxonomy' => 'product_cat',
+                'field' => 'slug',
+                'terms' => explode(',', $atts['category'])
+            )
+        );
+    }
+
+    // Get total count
+    $count_query = new WP_Query($args);
+    $total_products = $count_query->found_posts;
+    wp_reset_postdata();
+
+    // Now update args for actual display query
+    $args['posts_per_page'] = $atts['per_page'];
+
+    // Update scripts with proper data
+    wp_localize_script('wc-product-filter', 'wcFilter', array(
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('wc_filter_nonce'),
+        'category' => $atts['category'],
+        'total_products' => $total_products,
+        'per_page' => $atts['per_page']
+    ));
+
     wp_localize_script('wc-product-pagination', 'wcPagination', array(
         'ajaxUrl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('wc_pagination_nonce')
+        'nonce' => wp_create_nonce('wc_pagination_nonce'),
+        'category' => $atts['category'],
+        'total_products' => $total_products,
+        'per_page' => $atts['per_page']
     ));
 
     ob_start();
@@ -75,11 +112,14 @@ function wc_product_table_shortcode($atts) {
     </div>
 
     <div class="overflow-x-auto">
-        <table id="product-table" class="min-w-full border-collapse !border !border-gray-200">
+        <table id="product-table" 
+               class="min-w-full border-collapse !border !border-gray-200"
+               data-total="<?php echo $total_products; ?>"
+               data-per-page="<?php echo $atts['per_page']; ?>">
             <!-- Table Header -->
             <thead>
                 <tr class="!border-b !border-gray-200 bg-[#FAFAFA]">
-                    <th style="width:100px !important" class="p-4 text-center font-semibold !border !border-gray-200">IMAGES</th>
+                    <th style="width:120px !important" class="p-4 text-center font-semibold !border !border-gray-200">IMAGES</th>
                     <th style="width:50% !important" class="p-4 text-left font-semibold !border !border-gray-200 w-[400px]">PRODUCT</th>
                     <th style="width:30% !important" class="p-4 text-center font-semibold !border !border-gray-200">PRICE</th>
                     <th style="width:100px !important" class="p-4 text-center font-semibold !border !border-gray-200">QTY</th>
@@ -89,27 +129,7 @@ function wc_product_table_shortcode($atts) {
             <!-- Table Body -->
             <tbody>
                 <?php
-                $args = array(
-                    'post_type' => 'product',
-                    'posts_per_page' => $atts['per_page'],
-                    'orderby' => 'title',
-                    'order' => 'ASC'
-                );
-
-                // Add category filter if specified
-                if (!empty($atts['category'])) {
-                    $args['tax_query'] = array(
-                        array(
-                            'taxonomy' => 'product_cat',
-                            'field' => 'slug',
-                            'terms' => explode(',', $atts['category'])
-                        )
-                    );
-                }
-
                 $loop = new WP_Query($args);
-                $total_products = $loop->found_posts;
-
                 while ($loop->have_posts()) : $loop->the_post();
                     global $product;
                     ?>
@@ -211,7 +231,7 @@ function wc_product_table_shortcode($atts) {
                     <span>total</span>
                 </div>
                 <div class="pagination-total-progress">
-                    <span style="width: <?php echo ($atts['per_page'] / $total_products) * 100; ?>%" class="pagination-total-item"></span>
+                    <span style="width: <?php echo $total_products > 0 ? ($atts['per_page'] / $total_products) * 100 : 0; ?>%" class="pagination-total-item"></span>
                 </div>
             </div>
             <?php if ($total_products > $atts['per_page']): ?>
@@ -247,6 +267,7 @@ function wc_ajax_load_more_products() {
         'order' => 'ASC'
     );
 
+    // Always apply category filter if it exists
     if (!empty($category)) {
         $args['tax_query'] = array(
             array(
@@ -458,26 +479,7 @@ function wc_ajax_search_products() {
         'order' => 'ASC'
     );
 
-    // Only show initial number of products if no search/filter is active
-    if (empty($search_term) && (empty($letter) || $letter === 'all')) {
-        $args['posts_per_page'] = $per_page;
-    } else {
-        // Show all filtered results
-        $args['posts_per_page'] = -1;
-        
-        // Add search query
-        if (!empty($search_term)) {
-            $args['s'] = $search_term;
-        }
-
-        // Add letter filter
-        if (!empty($letter) && $letter !== 'all') {
-            set_query_var('title_filter', $letter); // Properly set the query var
-            add_filter('posts_where', 'filter_products_by_title_first_letter');
-        }
-    }
-
-    // Add category filter
+    // Always apply category filter if it exists, regardless of letter filter
     if (!empty($category)) {
         $args['tax_query'] = array(
             array(
@@ -488,8 +490,25 @@ function wc_ajax_search_products() {
         );
     }
 
+    // Set pagination based on filters
+    if (empty($search_term) && (empty($letter) || $letter === 'all')) {
+        $args['posts_per_page'] = $per_page;
+    } else {
+        $args['posts_per_page'] = -1;
+    }
+
+    // Add search query if present
+    if (!empty($search_term)) {
+        $args['s'] = $search_term;
+    }
+
+    // Add letter filter if present and not 'all'
+    if (!empty($letter) && $letter !== 'all') {
+        set_query_var('title_filter', $letter);
+        add_filter('posts_where', 'filter_products_by_title_first_letter');
+    }
+
     $loop = new WP_Query($args);
-    
     ob_start();
     while ($loop->have_posts()) : $loop->the_post();
         global $product;
