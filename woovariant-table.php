@@ -26,6 +26,12 @@ function wc_product_table_enqueue_scripts() {
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('wc_cart_nonce')
      ));
+    // Add pagination script and localize it
+    wp_enqueue_script('wc-product-pagination', plugins_url('assets/js/table.js', __FILE__), array('jquery'), '1.0', true);
+    wp_localize_script('wc-product-pagination', 'wcPagination', array(
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('wc_pagination_nonce')
+    ));
     // Add new JavaScript for filtering
     wp_enqueue_script('wc-product-filter', plugins_url('assets/js/filter.js', __FILE__), array('jquery'), '1.0', true);
     wp_localize_script('wc-product-filter', 'wcFilter', array(
@@ -119,11 +125,11 @@ function wc_product_table_shortcode($atts) {
             <!-- Table Header -->
             <thead>
                 <tr class="!border-b !border-gray-200 bg-[#FAFAFA]">
-                    <th style="width:120px !important" class="p-4 text-center font-semibold !border !border-gray-200">IMAGES</th>
-                    <th style="width:50% !important" class="p-4 text-left font-semibold !border !border-gray-200 w-[400px]">PRODUCT</th>
-                    <th style="width:30% !important" class="p-4 text-center font-semibold !border !border-gray-200">PRICE</th>
-                    <th style="width:100px !important" class="p-4 text-center font-semibold !border !border-gray-200">QTY</th>
-                    <th style="width:180px !important" class="text-center font-semibold !border !border-gray-200">OPTIONS</th>
+                    <th style="width:120px !important" class="p-4 align-middle text-center font-semibold !border !border-gray-200">IMAGES</th>
+                    <th style="width:50% !important" class="p-4 align-middle text-left font-semibold !border !border-gray-200 w-[400px]">PRODUCT</th>
+                    <th style="width:30% !important" class="p-4 align-middle text-center font-semibold !border !border-gray-200">PRICE</th>
+                    <th style="width:100px !important" class="p-4 align-middle text-center font-semibold !border !border-gray-200">QTY</th>
+                    <th style="width:180px !important" class="p-4 align-middle text-center font-semibold !border !border-gray-200">OPTIONS</th>
                 </tr>
             </thead>
             <!-- Table Body -->
@@ -135,17 +141,17 @@ function wc_product_table_shortcode($atts) {
                     ?>
                     <!-- Product Row -->
                     <tr class="!border-b !border-gray-200">
-                        <td class="p-4 !border !border-gray-200 w-24 text-center">
+                        <td class="p-4 align-middle !border !border-gray-200 w-24 text-center">
                             <?php 
                             $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
                             $img_url = $image ? $image[0] : wc_placeholder_img_src();
                             ?>
                             <img src="<?php echo esc_url($img_url); ?>" 
                                  alt="<?php echo esc_attr(get_the_title()); ?>" 
-                                 class="w-20 h-20 object-contain mx-auto"/>
+                                 class="w-[60px] h-[60px] object-contain mx-auto"/>
                         </td>
-                        <td class="p-4 !border text-black !border-gray-200 w-[400px]"><?php echo strtoupper(get_the_title()); ?></td>
-                        <td class="p-4 !border !border-gray-200 text-center">
+                        <td class="p-4 align-middle !border text-black !border-gray-200 w-[400px]"><?php echo strtoupper(get_the_title()); ?></td>
+                        <td class="p-4 align-middle !border !border-gray-200 text-center">
                             <div class="flex flex-row items-center justify-center gap-1">
                                 <?php if ($product->is_type('variable')): 
                                     $min_price = $product->get_variation_price('min');
@@ -155,14 +161,14 @@ function wc_product_table_shortcode($atts) {
                                 endif; ?>
                             </div>
                         </td>
-                        <td class="p-4 !border !border-gray-200 text-center">
+                        <td class="p-4 align-middle !border !border-gray-200 text-center">
                             <?php if (!$product->is_type('variable')): ?>
                                 <div class="flex justify-center">
                                     <input type="number" min="1" value="1" class="w-20 p-2 border rounded text-center">
                                 </div>
                             <?php endif; ?>
                         </td>
-                        <td class="p-4 !border !border-gray-200 text-center">
+                        <td class="p-4 align-middle !border !border-gray-200 text-center">
                             <?php if ($product->is_type('variable')): ?>
                                 <button class="toggle-variants bg-[#232323] text-white px-4 py-2.5 text-sm hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 w-full mx-auto font-bold" data-id="<?php echo $product->get_id(); ?>">
                                     SHOW VARIANTS
@@ -186,23 +192,23 @@ function wc_product_table_shortcode($atts) {
                             }
                             ?>
                             <tr class="variant-row variant-<?php echo $product->get_id(); ?> !border-b !border-gray-200 bg-gray-50">
-                                <td class="p-4 !border !border-gray-200">
+                                <td class="p-4 align-middle !border !border-gray-200">
                                     <img src="<?php echo esc_url($variation['image']['url']); ?>" 
                                          alt="<?php echo esc_attr($variation['variation_description']); ?>"
-                                         class="w-20 h-20 object-contain" />
+                                         class="w-[60px] h-[60px] object-contain mx-auto" />
                                 </td>
-                                <td class="p-4 !border !border-gray-200"><?php echo strtoupper(implode(', ', $variation['attributes'])); ?></td>
-                                <td class="p-4 !border !border-gray-200">
+                                <td class="p-4 align-middle !border !border-gray-200"><?php echo strtoupper(implode(', ', $variation['attributes'])); ?></td>
+                                <td class="p-4 align-middle !border !border-gray-200">
                                     <div class="flex flex-col items-center">
                                         <span class="font-medium text-black"><?php echo wc_price($variation['display_price']); ?></span>
                                     </div>
                                 </td>
-                                <td class="p-4 !border !border-gray-200">
+                                <td class="p-4 align-middle !border !border-gray-200">
                                     <div class="flex justify-center">
                                         <input type="number" min="1" value="1" class="w-20 p-2 border rounded text-center">
                                     </div>
                                 </td>
-                                <td class="p-4 !border !border-gray-200">
+                                <td class="p-4 align-middle !border !border-gray-200">
                                     <button class="add-to-cart bg-[#232323] text-white px-4 py-2.5 text-sm hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 w-full font-bold" 
                                             data-id="<?php echo $variation['variation_id']; ?>">
                                         ADD TO CART

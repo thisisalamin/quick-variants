@@ -129,7 +129,25 @@ jQuery(document).ready(function($) {
                 letter: letter,
                 category: wcFilter.category // Always include the category
             },
-            // ... rest of the function ...
+            success: function(response) {
+                if (response.success) {
+                    $('#product-table tbody').html(response.data.html);
+                    
+                    // Trigger event with count data
+                    $(document).trigger('productsFiltered', {
+                        count: response.data.count,
+                        total: response.data.total_products
+                    });
+
+                    // Update pagination visibility
+                    if (response.data.show_pagination) {
+                        $('.pagination-button').show();
+                    } else {
+                        $('.pagination-button').hide();
+                    }
+                }
+            }
+            // ...rest of the code...
         });
     }
 });
