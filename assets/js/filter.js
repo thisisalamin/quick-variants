@@ -10,6 +10,7 @@ jQuery(document).ready(function($) {
     let currentLetter = 'all';
     let searchTimer;
     const searchDelay = 500; // Delay in milliseconds
+    let visibleVariants = new Set();
 
     // Toggle dropdown
     filterButton.on('click', function(e) {
@@ -150,4 +151,50 @@ jQuery(document).ready(function($) {
             // ...rest of the code...
         });
     }
+
+    // Add this function to track visible variants
+    function updateVisibleVariants() {
+        visibleVariants.clear();
+        document.querySelectorAll('.variant-row').forEach(row => {
+            if (row.style.display !== 'none') {
+                const productId = row.className.match(/variant-(\d+)/)[1];
+                visibleVariants.add(parseInt(productId));
+            }
+        });
+    }
+
+    // Update the search/filter function
+    function searchProducts(searchTerm = '', letter = '') {
+        const data = {
+            action: 'search_products',
+            nonce: wcFilter.nonce,
+            search: searchTerm,
+            letter: letter,
+            category: wcFilter.category,
+            per_page: wcFilter.per_page,
+            visible_variants: Array.from(visibleVariants)
+        };
+
+        jQuery.post(wcFilter.ajaxUrl, data, function(response) {
+            if (response.success) {
+                jQuery('#product-table tbody').html(response.data.html);
+                updatePagination(response.data);
+            }
+        });
+    }
+
+    // Track variant visibility when toggling
+    $(document).on('click', '.toggle-variants', function() {
+        const productId = $(this).data('id');
+        const variantRows = $(`.variant-${productId}`);
+        
+        if (variantRows.first().is(':visible')) {
+            visibleVariants.delete(productId);
+        } else {
+            visibleVariants.add(productId);
+        }
+        
+        variantRows.toggle();
+        updateVisibleVariants();
+    });
 });

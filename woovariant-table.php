@@ -478,6 +478,7 @@ function wc_ajax_search_products() {
     $letter = isset($_POST['letter']) ? sanitize_text_field($_POST['letter']) : '';
     $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
     $per_page = isset($_POST['per_page']) ? intval($_POST['per_page']) : 10;
+    $visible_variants = isset($_POST['visible_variants']) ? array_map('intval', $_POST['visible_variants']) : array();
 
     $args = array(
         'post_type' => 'product',
@@ -485,7 +486,7 @@ function wc_ajax_search_products() {
         'order' => 'ASC'
     );
 
-    // Always apply category filter if it exists, regardless of letter filter
+    // Add category filter if specified
     if (!empty($category)) {
         $args['tax_query'] = array(
             array(
@@ -508,7 +509,7 @@ function wc_ajax_search_products() {
         $args['s'] = $search_term;
     }
 
-    // Add letter filter if present and not 'all'
+    // Add letter filter if present
     if (!empty($letter) && $letter !== 'all') {
         set_query_var('title_filter', $letter);
         add_filter('posts_where', 'filter_products_by_title_first_letter');
@@ -518,11 +519,12 @@ function wc_ajax_search_products() {
     ob_start();
     while ($loop->have_posts()) : $loop->the_post();
         global $product;
+        // Pass the visible variants to the template
+        set_query_var('visible_variants', $visible_variants);
         include(plugin_dir_path(__FILE__) . 'templates/product-row.php');
     endwhile;
     wp_reset_postdata();
 
-    // Remove the letter filter if it was added
     if (!empty($letter) && $letter !== 'all') {
         remove_filter('posts_where', 'filter_products_by_title_first_letter');
     }
