@@ -191,7 +191,7 @@ function wc_product_table_shortcode($atts) {
                                 continue;
                             }
                             ?>
-                            <tr class="variant-row variant-<?php echo $product->get_id(); ?> !border-b !border-gray-200 bg-gray-50">
+                            <tr class="variant-row variant-<?php echo $product->get_id(); ?> !border-b !border-gray-200 bg-gray-50" style="display: none;">
                                 <td class="p-4 align-middle !border !border-gray-200">
                                     <img src="<?php echo esc_url($variation['image']['url']); ?>" 
                                          alt="<?php echo esc_attr($variation['variation_description']); ?>"

@@ -1,6 +1,6 @@
 .variant-row {
     display: none !important; /* Force hide by default */
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, all 0.3s ease-in-out;
 }
 
 .variant-row:hover {
@@ -1422,5 +1422,20 @@
         display: flex !important;
         flex-direction: column !important;
         width: 100% !important;
+    }
+}
+
+/* Override hidden variants */
+.variant-row {
+    display: none !important;
+}
+
+.variant-row.showing {
+    display: table-row !important;
+}
+
+@media (max-width: 767px) {
+    .variant-row.showing {
+        display: flex !important;
     }
 }
