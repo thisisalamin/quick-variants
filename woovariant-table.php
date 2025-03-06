@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: WooCommerce Variant  Product Table
+ * Plugin Name: WooCommerce Variant Product Table
  * Description: Display WooCommerce products in a table format with expandable variants.
  * Version: 1.0
  * Author: Mohamed Alamin
@@ -15,114 +15,118 @@
 
 if (!defined('ABSPATH')) exit;
 
-// Enqueue scripts and styles
+/**
+ * Enqueue Scripts and Styles
+ */
 function wc_product_table_enqueue_scripts() {
-    // Enqueue compiled Tailwind CSS
+    // Tailwind + custom CSS
     wp_enqueue_style('wc-product-table-styles', plugins_url('assets/css/dist/style.css', __FILE__));
     wp_enqueue_style('wc-product-table-custom', plugins_url('assets/css/table.css', __FILE__));
+    
+    // JavaScript for table interactions (variants, pagination, search, filter)
     wp_enqueue_script('wc-product-table', plugins_url('assets/js/table.js', __FILE__), array('jquery'), '1.0', true);
+
+    // Cart script
     wp_enqueue_script('wc-product-cart', plugins_url('assets/js/cart.js', __FILE__), array('jquery'), '1.0', true);
     wp_localize_script('wc-product-cart', 'wcCart', array(
         'ajaxUrl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('wc_cart_nonce')
-     ));
-    // Add pagination script and localize it
-    wp_enqueue_script('wc-product-pagination', plugins_url('assets/js/table.js', __FILE__), array('jquery'), '1.0', true);
-    wp_localize_script('wc-product-pagination', 'wcPagination', array(
-        'ajaxUrl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('wc_pagination_nonce')
+        'nonce'   => wp_create_nonce('wc_cart_nonce')
     ));
-    // Add new JavaScript for filtering
+
+    // Filter + Search + “Show More” logic
     wp_enqueue_script('wc-product-filter', plugins_url('assets/js/filter.js', __FILE__), array('jquery'), '1.0', true);
     wp_localize_script('wc-product-filter', 'wcFilter', array(
         'ajaxUrl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('wc_filter_nonce')
+        'nonce'   => wp_create_nonce('wc_filter_nonce'),
+        // Category + per_page will be set dynamically within the shortcode
+        // so we only localize the base data here. The rest is done in the shortcode function.
     ));
 }
 add_action('wp_enqueue_scripts', 'wc_product_table_enqueue_scripts');
 
-// Shortcode to display product table
+/**
+ * Shortcode to display the product table
+ */
 function wc_product_table_shortcode($atts) {
     $atts = shortcode_atts(array(
-        'category' => '',
+        'category' => '',   // Comma-separated category slugs
         'per_page' => 10,
     ), $atts);
 
-    // Get total products count first
-    $args = array(
-        'post_type' => 'product',
-        'posts_per_page' => -1, // Get all products for counting
-        'orderby' => 'title',
-        'order' => 'ASC'
+    // Count total products in these categories
+    $args_for_count = array(
+        'post_type'      => 'product',
+        'posts_per_page' => -1,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
     );
 
-    // Add category filter if specified
     if (!empty($atts['category'])) {
-        $args['tax_query'] = array(
+        $args_for_count['tax_query'] = array(
             array(
                 'taxonomy' => 'product_cat',
-                'field' => 'slug',
-                'terms' => explode(',', $atts['category'])
+                'field'    => 'slug',
+                'terms'    => explode(',', $atts['category']),
             )
         );
     }
 
-    // Get total count
-    $count_query = new WP_Query($args);
-    $total_products = $count_query->found_posts;
+    $count_query     = new WP_Query($args_for_count);
+    $total_products  = $count_query->found_posts;
     wp_reset_postdata();
 
-    // Now update args for actual display query
-    $args['posts_per_page'] = $atts['per_page'];
+    // For initial display, fetch first page
+    $args_for_display = array(
+        'post_type'      => 'product',
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+        'posts_per_page' => $atts['per_page'],
+    );
 
-    // Update scripts with proper data
+    if (!empty($atts['category'])) {
+        $args_for_display['tax_query'] = array(
+            array(
+                'taxonomy' => 'product_cat',
+                'field'    => 'slug',
+                'terms'    => explode(',', $atts['category']),
+            )
+        );
+    }
+
+    // Localize final data for the JS script
     wp_localize_script('wc-product-filter', 'wcFilter', array(
-        'ajaxUrl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('wc_filter_nonce'),
-        'category' => $atts['category'],
+        'ajaxUrl'        => admin_url('admin-ajax.php'),
+        'nonce'          => wp_create_nonce('wc_filter_nonce'),
+        'category'       => $atts['category'],
         'total_products' => $total_products,
-        'per_page' => $atts['per_page']
-    ));
-
-    wp_localize_script('wc-product-pagination', 'wcPagination', array(
-        'ajaxUrl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('wc_pagination_nonce'),
-        'category' => $atts['category'],
-        'total_products' => $total_products,
-        'per_page' => $atts['per_page']
+        'per_page'       => $atts['per_page']
     ));
 
     ob_start();
     ?>
-    <!-- Search and Filter Section -->
+    <!-- Search + Filter Section -->
     <div class="search-filter-container">
         <div class="search-filter-wrapper">
             <div class="search-section">
                 <div class="search-input-wrapper">
-                    <input type="text" 
-                           id="product-search" 
-                           placeholder="Search products..." 
-                           class="search-input">
+                    <input type="text" id="product-search" placeholder="Search products..." class="search-input">
                 </div>
-                
                 <div class="alphabet-filter-container">
                     <button class="alphabet-filter active" data-letter="all">All</button>
-                    <?php
-                    foreach (range('A', 'Z') as $letter) {
-                        echo '<button class="alphabet-filter" data-letter="' . $letter . '">' . $letter . '</button>';
-                    }
-                    ?>
+                    <?php foreach (range('A', 'Z') as $letter) : ?>
+                        <button class="alphabet-filter" data-letter="<?php echo $letter; ?>"><?php echo $letter; ?></button>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="overflow-x-auto">
-        <table id="product-table" 
+        <table id="product-table"
                class="min-w-full border-collapse !border !border-gray-200"
                data-total="<?php echo $total_products; ?>"
                data-per-page="<?php echo $atts['per_page']; ?>">
-            <!-- Table Header -->
+
             <thead>
                 <tr class="!border-b !border-gray-200 bg-[#FAFAFA]">
                     <th style="width:120px !important" class="p-4 align-middle text-center font-semibold !border !border-gray-200">IMAGES</th>
@@ -132,182 +136,64 @@ function wc_product_table_shortcode($atts) {
                     <th style="width:180px !important" class="p-4 align-middle text-center font-semibold !border !border-gray-200">OPTIONS</th>
                 </tr>
             </thead>
-            <!-- Table Body -->
+
             <tbody>
                 <?php
-                $loop = new WP_Query($args);
-                while ($loop->have_posts()) : $loop->the_post();
+                // Show the first batch of products
+                $display_query = new WP_Query($args_for_display);
+                while ($display_query->have_posts()) : $display_query->the_post();
                     global $product;
-                    ?>
-                    <!-- Product Row -->
-                    <tr class="!border-b !border-gray-200">
-                        <td class="p-4 align-middle !border !border-gray-200 w-24 text-center">
-                            <?php 
-                            $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
-                            $img_url = $image ? $image[0] : wc_placeholder_img_src();
-                            ?>
-                            <img src="<?php echo esc_url($img_url); ?>" 
-                                 alt="<?php echo esc_attr(get_the_title()); ?>" 
-                                 class="w-[60px] h-[60px] object-contain mx-auto"/>
-                        </td>
-                        <td class="p-4 align-middle !border text-black !border-gray-200 w-[400px]"><?php echo strtoupper(get_the_title()); ?></td>
-                        <td class="p-4 align-middle !border !border-gray-200 text-center">
-                            <div class="flex flex-row items-center justify-center gap-1">
-                                <?php if ($product->is_type('variable')): 
-                                    $min_price = $product->get_variation_price('min');
-                                    echo 'From ' . '<span class="text-black font-medium">' . wc_price($min_price) . '</span>';
-                                else:
-                                    echo '<span class="text-black font-medium">' . $product->get_price_html() . '</span>';
-                                endif; ?>
-                            </div>
-                        </td>
-                        <td class="p-4 align-middle !border !border-gray-200 text-center">
-                            <?php if (!$product->is_type('variable')): ?>
-                                <div class="flex justify-center">
-                                    <input type="number" min="1" value="1" class="w-20 p-2 border rounded text-center">
-                                </div>
-                            <?php endif; ?>
-                        </td>
-                        <td class="p-4 align-middle !border !border-gray-200 text-center">
-                            <?php if ($product->is_type('variable')): ?>
-                                <button class="toggle-variants bg-[#232323] text-white px-4 py-2.5 text-sm hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 w-full mx-auto font-bold" data-id="<?php echo $product->get_id(); ?>">
-                                    SHOW VARIANTS
-                                </button>
-                            <?php else: ?>
-                                <button class="add-to-cart bg-[#232323] text-white px-4 py-2.5 text-sm hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 w-full mx-auto font-bold" data-id="<?php echo $product->get_id(); ?>">
-                                    ADD TO CART
-                                </button>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                    <?php
-                    if ($product->is_type('variable')) {
-                        $variations = $product->get_available_variations();
-                        foreach ($variations as $variation) {
-                            // Skip if variation is out of stock or has no price/zero price
-                            if (!$variation['is_in_stock'] || 
-                                !isset($variation['display_price']) || 
-                                $variation['display_price'] <= 0) {
-                                continue;
-                            }
-                            ?>
-                            <tr class="variant-row variant-<?php echo $product->get_id(); ?> !border-b !border-gray-200 bg-gray-50" style="display: none;">
-                                <td class="p-4 align-middle !border !border-gray-200">
-                                    <img src="<?php echo esc_url($variation['image']['url']); ?>" 
-                                         alt="<?php echo esc_attr($variation['variation_description']); ?>"
-                                         class="w-[60px] h-[60px] object-contain mx-auto" />
-                                </td>
-                                <td class="p-4 align-middle !border !border-gray-200"><?php echo strtoupper(implode(', ', $variation['attributes'])); ?></td>
-                                <td class="p-4 align-middle !border !border-gray-200">
-                                    <div class="flex flex-col items-center">
-                                        <span class="font-medium text-black"><?php echo wc_price($variation['display_price']); ?></span>
-                                    </div>
-                                </td>
-                                <td class="p-4 align-middle !border !border-gray-200">
-                                    <div class="flex justify-center">
-                                        <input type="number" min="1" value="1" class="w-20 p-2 border rounded text-center">
-                                    </div>
-                                </td>
-                                <td class="p-4 align-middle !border !border-gray-200">
-                                    <button class="add-to-cart bg-[#232323] text-white px-4 py-2.5 text-sm hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 w-full font-bold" 
-                                            data-id="<?php echo $variation['variation_id']; ?>">
-                                        ADD TO CART
-                                    </button>
-                                </td>
-                            </tr>
-                            <?php
-                        }
-                    }
+                    include plugin_dir_path(__FILE__) . 'templates/product-row.php';
                 endwhile;
                 wp_reset_postdata();
                 ?>
             </tbody>
         </table>
     </div>
-    <div class="pagination-wrapper text-center">
+
+    <div class="pagination-wrapper text-center" <?php echo ($total_products <= $atts['per_page']) ? 'style="display:none;"' : ''; ?>>
         <nav class="pagination style--1 text-center" role="navigation" aria-label="Pagination">
             <div class="pagination-page-item pagination-page-total">
                 <div class="flex items-center justify-center gap-1 text-gray-600 mb-2">
                     <span>Showing</span>
                     <span data-total-start="1" class="font-medium">1</span>
                     <span>-</span>
-                    <span data-total-end="<?php echo min($atts['per_page'], $total_products); ?>" class="font-medium"><?php echo min($atts['per_page'], $total_products); ?></span>
+                    <span data-total-end="<?php echo min($atts['per_page'], $total_products); ?>" class="font-medium">
+                        <?php echo min($atts['per_page'], $total_products); ?>
+                    </span>
                     <span>of</span>
                     <span class="font-medium"><?php echo $total_products; ?></span>
                     <span>total</span>
                 </div>
                 <div class="pagination-total-progress">
-                    <span style="width: <?php echo $total_products > 0 ? ($atts['per_page'] / $total_products) * 100 : 0; ?>%" class="pagination-total-item"></span>
+                    <?php 
+                    $initial_progress = $total_products > 0 ? ($atts['per_page'] / $total_products) * 100 : 0;
+                    ?>
+                    <span style="width: <?php echo $initial_progress; ?>%" class="pagination-total-item"></span>
                 </div>
             </div>
-            <?php if ($total_products > $atts['per_page']): ?>
             <div class="pagination-button">
-                <a href="#" class="show-more-button" data-page="1" data-per-page="<?php echo $atts['per_page']; ?>" data-total="<?php echo $total_products; ?>">
+                <a href="#" class="show-more-button"
+                   data-page="1"
+                   data-per-page="<?php echo $atts['per_page']; ?>"
+                   data-total="<?php echo $total_products; ?>">
                     <div class="button-content">
                         <span class="loader"></span>
                         <span class="button-text">SHOW MORE</span>
                     </div>
                 </a>
             </div>
-            <?php endif; ?>
         </nav>
     </div>
     <?php
+
     return ob_get_clean();
 }
 add_shortcode('wc_product_table', 'wc_product_table_shortcode');
 
-// Add AJAX handler for loading more products
-function wc_ajax_load_more_products() {
-    check_ajax_referer('wc_pagination_nonce', 'nonce');
-    
-    $page = isset($_POST['page']) ? intval($_POST['page']) : 1;
-    $per_page = isset($_POST['per_page']) ? intval($_POST['per_page']) : 10;
-    $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
-
-    $args = array(
-        'post_type' => 'product',
-        'posts_per_page' => $per_page,
-        'paged' => $page,
-        'orderby' => 'title',
-        'order' => 'ASC'
-    );
-
-    // Always apply category filter if it exists
-    if (!empty($category)) {
-        $args['tax_query'] = array(
-            array(
-                'taxonomy' => 'product_cat',
-                'field' => 'slug',
-                'terms' => explode(',', $category)
-            )
-        );
-    }
-
-    $loop = new WP_Query($args);
-    $total_products = $loop->found_posts;
-    $response = array(
-        'html' => '',
-        'has_more' => false,
-        'total' => $total_products,
-        'current_page' => $page
-    );
-
-    ob_start();
-    while ($loop->have_posts()) : $loop->the_post();
-        global $product;
-        include(plugin_dir_path(__FILE__) . 'templates/product-row.php');
-    endwhile;
-    wp_reset_postdata();
-    
-    $response['html'] = ob_get_clean();
-    $response['has_more'] = ($page * $per_page) < $total_products;
-    
-    wp_send_json_success($response);
-}
-add_action('wp_ajax_load_more_products', 'wc_ajax_load_more_products');
-add_action('wp_ajax_nopriv_load_more_products', 'wc_ajax_load_more_products');
-
+/**
+ * Renders the hidden slide cart template in the footer
+ */
 function wc_cart_template() {
     ?>
     <div id="slide-cart">
@@ -318,8 +204,12 @@ function wc_cart_template() {
                     <p class="text-gray-500 text-sm"><span id="cart-count">0</span> items</p>
                 </div>
                 <button id="close-cart" class="text-gray-400 hover:text-gray-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
@@ -340,10 +230,12 @@ function wc_cart_template() {
                     <span id="cart-total" class="font-medium">0.00</span>
                 </div>
 
-                <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full text-sm bg-[#232323] text-white py-2.5 mb-2 hover:bg-black/80 transition-all duration-300 text-center font-bold">
+                <a href="<?php echo wc_get_checkout_url(); ?>"
+                   class="block w-full text-sm bg-[#232323] text-white py-2.5 mb-2 hover:bg-black/80 transition-all duration-300 text-center font-bold">
                     CHECKOUT
                 </a>
-                <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full text-sm border border-gray-300 text-gray-700 py-2.5 hover:bg-gray-50 transition-all duration-300 text-center font-bold">
+                <a href="<?php echo wc_get_cart_url(); ?>"
+                   class="block w-full text-sm border border-gray-300 text-gray-700 py-2.5 hover:bg-gray-50 transition-all duration-300 text-center font-bold">
                     VIEW CART
                 </a>
             </div>
@@ -354,33 +246,38 @@ function wc_cart_template() {
 }
 add_action('wp_footer', 'wc_cart_template');
 
-// Add to cart AJAX handler
+/**
+ * Format price helper
+ */
 function format_price($price_html) {
     // Convert HTML entities to their actual characters and strip tags
     return html_entity_decode(strip_tags($price_html));
 }
 
+/**
+ * AJAX: Add to Cart
+ */
 function wc_ajax_add_to_cart() {
     check_ajax_referer('wc_cart_nonce', 'nonce');
     
     $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
-    $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1;
+    $quantity   = isset($_POST['quantity'])   ? intval($_POST['quantity'])   : 1;
     
     if ($product_id > 0) {
         $added = WC()->cart->add_to_cart($product_id, $quantity);
         if ($added) {
             $cart_data = array(
-                'items' => array(),
-                'count' => WC()->cart->get_cart_contents_count(),
+                'items'    => array(),
+                'count'    => WC()->cart->get_cart_contents_count(),
                 'subtotal' => format_price(WC()->cart->get_cart_subtotal()),
-                'total' => format_price(WC()->cart->get_cart_total())
+                'total'    => format_price(WC()->cart->get_cart_total())
             );
 
             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-                $product = $cart_item['data'];
+                $product   = $cart_item['data'];
                 $parent_id = $product->is_type('variation') ? $product->get_parent_id() : $product->get_id();
                 
-                // Get variation image or fallback to parent product image
+                // Variation image or fallback to parent product image
                 $image_id = $product->get_image_id();
                 if (!$image_id && $product->is_type('variation')) {
                     $image_id = get_post_thumbnail_id($parent_id);
@@ -390,11 +287,11 @@ function wc_ajax_add_to_cart() {
                 $image_url = $image_url ? $image_url[0] : wc_placeholder_img_src();
 
                 $cart_data['items'][] = array(
-                    'key' => $cart_item_key,
-                    'name' => $product->get_name(),
-                    'quantity' => $cart_item['quantity'],
-                    'price' => format_price(WC()->cart->get_product_price($product)),
-                    'image' => $image_url,
+                    'key'       => $cart_item_key,
+                    'name'      => $product->get_name(),
+                    'quantity'  => $cart_item['quantity'],
+                    'price'     => format_price(WC()->cart->get_product_price($product)),
+                    'image'     => $image_url,
                     'variation' => isset($cart_item['variation']) ? implode(', ', $cart_item['variation']) : ''
                 );
             }
@@ -403,29 +300,29 @@ function wc_ajax_add_to_cart() {
         }
     }
     
-    wp_send_json_error(array(
-        'message' => 'Failed to add product'
-     ));
+    wp_send_json_error(array('message' => 'Failed to add product'));
 }
 add_action('wp_ajax_add_to_cart', 'wc_ajax_add_to_cart');
 add_action('wp_ajax_nopriv_add_to_cart', 'wc_ajax_add_to_cart');
 
-// Get cart contents AJAX handler
+/**
+ * AJAX: Get Cart Contents
+ */
 function wc_ajax_get_cart() {
     check_ajax_referer('wc_cart_nonce', 'nonce');
     
     $cart_data = array(
-        'items' => array(),
-        'count' => WC()->cart->get_cart_contents_count(),
+        'items'    => array(),
+        'count'    => WC()->cart->get_cart_contents_count(),
         'subtotal' => format_price(WC()->cart->get_cart_subtotal()),
-        'total' => format_price(WC()->cart->get_cart_total())
+        'total'    => format_price(WC()->cart->get_cart_total())
     );
     
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-        $product = $cart_item['data'];
+        $product   = $cart_item['data'];
         $parent_id = $product->is_type('variation') ? $product->get_parent_id() : $product->get_id();
         
-        // Get variation image or fallback to parent product image
+        // Variation image or fallback to parent product image
         $image_id = $product->get_image_id();
         if (!$image_id && $product->is_type('variation')) {
             $image_id = get_post_thumbnail_id($parent_id);
@@ -435,11 +332,11 @@ function wc_ajax_get_cart() {
         $image_url = $image_url ? $image_url[0] : wc_placeholder_img_src();
 
         $cart_data['items'][] = array(
-            'key' => $cart_item_key,
-            'name' => $product->get_name(),
-            'quantity' => $cart_item['quantity'],
-            'price' => format_price(WC()->cart->get_product_price($product)),
-            'image' => $image_url,
+            'key'       => $cart_item_key,
+            'name'      => $product->get_name(),
+            'quantity'  => $cart_item['quantity'],
+            'price'     => format_price(WC()->cart->get_product_price($product)),
+            'image'     => $image_url,
             'variation' => isset($cart_item['variation']) ? implode(', ', $cart_item['variation']) : ''
         );
     }
@@ -449,7 +346,9 @@ function wc_ajax_get_cart() {
 add_action('wp_ajax_get_cart', 'wc_ajax_get_cart');
 add_action('wp_ajax_nopriv_get_cart', 'wc_ajax_get_cart');
 
-// Update cart quantity AJAX handler
+/**
+ * AJAX: Update Cart Quantity
+ */
 function wc_ajax_update_cart() {
     check_ajax_referer('wc_cart_nonce', 'nonce');
     
@@ -460,9 +359,9 @@ function wc_ajax_update_cart() {
         WC()->cart->set_quantity($cart_key, $quantity);
         
         wp_send_json_success(array(
-            'count' => WC()->cart->get_cart_contents_count(),
+            'count'    => WC()->cart->get_cart_contents_count(),
             'subtotal' => format_price(WC()->cart->get_cart_subtotal()),
-            'total' => format_price(WC()->cart->get_cart_total())
+            'total'    => format_price(WC()->cart->get_cart_total())
         ));
     }
     
@@ -471,7 +370,9 @@ function wc_ajax_update_cart() {
 add_action('wp_ajax_update_cart', 'wc_ajax_update_cart');
 add_action('wp_ajax_nopriv_update_cart', 'wc_ajax_update_cart');
 
-// Remove from cart AJAX handler
+/**
+ * AJAX: Remove from Cart
+ */
 function wc_ajax_remove_from_cart() {
     check_ajax_referer('wc_cart_nonce', 'nonce');
     
@@ -481,9 +382,9 @@ function wc_ajax_remove_from_cart() {
         WC()->cart->remove_cart_item($cart_key);
         
         wp_send_json_success(array(
-            'count' => WC()->cart->get_cart_contents_count(),
+            'count'    => WC()->cart->get_cart_contents_count(),
             'subtotal' => format_price(WC()->cart->get_cart_subtotal()),
-            'total' => format_price(WC()->cart->get_cart_total())
+            'total'    => format_price(WC()->cart->get_cart_total())
         ));
     }
     
@@ -492,88 +393,126 @@ function wc_ajax_remove_from_cart() {
 add_action('wp_ajax_remove_from_cart', 'wc_ajax_remove_from_cart');
 add_action('wp_ajax_nopriv_remove_from_cart', 'wc_ajax_remove_from_cart');
 
-// Add this new AJAX handler function
-function wc_ajax_search_products() {
-    check_ajax_referer('wc_filter_nonce', 'nonce');
-    
-    $search_term = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
-    $letter = isset($_POST['letter']) ? sanitize_text_field($_POST['letter']) : '';
-    $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
-    $per_page = isset($_POST['per_page']) ? intval($_POST['per_page']) : 10;
-    $visible_variants = isset($_POST['visible_variants']) ? array_map('intval', $_POST['visible_variants']) : array();
+/* ------------------------------------------------------------------
+   SINGLE AJAX ENDPOINT for all “Search / Filter / Show More” 
+   ------------------------------------------------------------------ */
 
-    $args = array(
-        'post_type' => 'product',
-        'orderby' => 'title',
-        'order' => 'ASC'
-    );
-
-    // Add category filter if specified
-    if (!empty($category)) {
-        $args['tax_query'] = array(
-            array(
-                'taxonomy' => 'product_cat',
-                'field' => 'slug',
-                'terms' => explode(',', $category),
-                'operator' => 'IN'
-            )
-        );
-    }
-
-    // Set pagination based on filters
-    if (empty($search_term) && (empty($letter) || $letter === 'all')) {
-        $args['posts_per_page'] = $per_page;
-    } else {
-        $args['posts_per_page'] = -1;
-    }
-
-    // Add search query if present
-    if (!empty($search_term)) {
-        $args['s'] = $search_term;
-    }
-
-    // Add letter filter if present
-    if (!empty($letter) && $letter !== 'all') {
-        set_query_var('title_filter', $letter);
-        add_filter('posts_where', 'filter_products_by_title_first_letter');
-    }
-
-    $loop = new WP_Query($args);
-    ob_start();
-    while ($loop->have_posts()) : $loop->the_post();
-        global $product;
-        // Pass the visible variants to the template
-        set_query_var('visible_variants', $visible_variants);
-        include(plugin_dir_path(__FILE__) . 'templates/product-row.php');
-    endwhile;
-    wp_reset_postdata();
-
-    if (!empty($letter) && $letter !== 'all') {
-        remove_filter('posts_where', 'filter_products_by_title_first_letter');
-    }
-
-    wp_send_json_success(array(
-        'html' => ob_get_clean(),
-        'count' => $loop->found_posts,
-        'show_pagination' => empty($search_term) && (empty($letter) || $letter === 'all'),
-        'total_products' => $loop->found_posts,
-        'category' => $category // Add this for debugging
-    ));
-}
-add_action('wp_ajax_search_products', 'wc_ajax_search_products');
-add_action('wp_ajax_nopriv_search_products', 'wc_ajax_search_products');
-
-// Helper function for letter filtering
+/**
+ * Helper function to filter products by first letter
+ */
 function filter_products_by_title_first_letter($where) {
     global $wpdb;
     $title_filter = get_query_var('title_filter');
     if ($title_filter) {
-        // Add both uppercase and lowercase variants of the letter
+        // Compare both uppercase + lowercase
         $where .= $wpdb->prepare(
-            " AND (UPPER(SUBSTR($wpdb->posts.post_title, 1, 1)) = %s OR LOWER(SUBSTR($wpdb->posts.post_title, 1, 1)) = %s)",
+            " AND (UPPER(SUBSTR($wpdb->posts.post_title,1,1)) = %s OR LOWER(SUBSTR($wpdb->posts.post_title,1,1)) = %s)",
             strtoupper($title_filter),
             strtolower($title_filter)
         );
     }
     return $where;
 }
+
+/**
+ * AJAX: Search products (handles search, A-Z filter, pagination, category filter).
+ */
+/**
+ * AJAX: Search products (handles search, A-Z filter, pagination, category filter).
+ */
+function wc_ajax_search_products() {
+    check_ajax_referer('wc_filter_nonce', 'nonce');
+    
+    $search_term      = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
+    $letter           = isset($_POST['letter']) ? sanitize_text_field($_POST['letter']) : '';
+    $category         = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
+    $per_page         = isset($_POST['per_page']) ? intval($_POST['per_page']) : 10;
+    $page             = isset($_POST['page']) ? intval($_POST['page']) : 1;
+    $visible_variants = isset($_POST['visible_variants']) ? array_map('intval', $_POST['visible_variants']) : array();
+
+    // Calculate offset based on current page
+    // E.g. page=1 => offset=0, page=2 => offset=5, etc.
+    $offset = ($page - 1) * $per_page;
+
+    // Build main query
+    $args = array(
+        'post_type'      => 'product',
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+        'posts_per_page' => $per_page,
+        'offset'         => $offset, // <-- use offset instead of paged
+    );
+
+    // If category is specified
+    if (!empty($category)) {
+        $args['tax_query'] = array(
+            array(
+                'taxonomy' => 'product_cat',
+                'field'    => 'slug',
+                'terms'    => explode(',', $category),
+                'operator' => 'IN'
+            )
+        );
+    }
+
+    // If user chose an A-Z filter
+    if (!empty($letter) && $letter !== 'all') {
+        set_query_var('title_filter', $letter);
+        add_filter('posts_where', 'filter_products_by_title_first_letter');
+    }
+
+    // If user typed in a search term
+    if (!empty($search_term)) {
+        $args['s'] = $search_term;
+    }
+
+    // First get total count
+    $count_args = $args;
+    $count_args['posts_per_page'] = -1;
+    $count_args['offset'] = 0; // for counting, do not offset
+    $count_args['fields'] = 'ids'; // faster for counting
+    $count_query = new WP_Query($count_args);
+    $total_products = $count_query->found_posts;
+    wp_reset_postdata();
+
+    // Now get paginated results using the offset
+    $loop = new WP_Query($args);
+    ob_start();
+    while ($loop->have_posts()) : $loop->the_post();
+        global $product;
+        // Make sure we pass the visible_variants to the template
+        set_query_var('visible_variants', $visible_variants);
+        include plugin_dir_path(__FILE__) . 'templates/product-row.php';
+    endwhile;
+    wp_reset_postdata();
+
+    // Remove the filter if used
+    if (!empty($letter) && $letter !== 'all') {
+        remove_filter('posts_where', 'filter_products_by_title_first_letter');
+    }
+
+    // Figure out the “range” being shown now
+    // Example: If page=2 & per_page=5 => offset=5 => showing products 6..10
+    $showing_start = $offset + 1;
+    $showing_end   = min($offset + $per_page, $total_products);
+
+    // If there's still more products beyond $showing_end
+    $has_more = ($showing_end < $total_products);
+
+    $response = array(
+        'html'             => ob_get_clean(),
+        'count'            => $total_products,
+        'show_pagination'  => true,  // show/hide pagination
+        'total_products'   => $total_products,
+        'current_page'     => $page,
+        'showing_start'    => $showing_start,
+        'showing_end'      => $showing_end,
+        'has_more'         => $has_more,
+        'category'         => $category,
+    );
+
+    wp_send_json_success($response);
+}
+
+add_action('wp_ajax_search_products', 'wc_ajax_search_products');
+add_action('wp_ajax_nopriv_search_products', 'wc_ajax_search_products');

@@ -1,217 +1,177 @@
 jQuery(document).ready(function($) {
-    let searchTimeout;
-    const productTable = $('#product-table tbody');
-    const paginationWrapper = $('.pagination-wrapper');
-    const searchInput = $('#product-search');
-    const filterButton = $('#filter-button');
-    const filterDropdown = $('#filter-dropdown');
-    const alphabetFilters = $('.alphabet-filter');
-    const currentFilter = $('#current-filter');
-    let currentLetter = 'all';
-    let searchTimer;
-    const searchDelay = 500; // Delay in milliseconds
-    let visibleVariants = new Set();
 
-    // Toggle dropdown
-    filterButton.on('click', function(e) {
-        e.stopPropagation();
-        filterDropdown.toggleClass('show');
-    });
+    let productTable      = $('#product-table tbody');
+    let paginationWrapper = $('.pagination-wrapper');
+    let searchInput       = $('#product-search');
+    let alphabetFilters   = $('.alphabet-filter');
+    let visibleVariants   = new Set(); // tracks product IDs whose variants are visible
 
-    // Close dropdown when clicking outside
-    $(document).on('click', function(e) {
-        if (!$(e.target).closest('.dropdown-filter').length) {
-            filterDropdown.removeClass('show');
-        }
-    });
+    // Helps us “debounce” the search calls
+    let searchTimeout     = null;
+    const searchDelay     = 300; // ms
 
-    // Function to update products
-    function updateProducts(searchTerm = '', letter = '') {
-        const perPage = $('#product-table').data('per-page');
-        
+    /**
+     * Universal function to fetch products via AJAX
+     * page        -> which page of results
+     * searchTerm  -> text query
+     * letter      -> A-Z filter
+     * append      -> if true, we append results; otherwise we replace
+     */
+    function updateProducts(searchTerm = '', letter = 'all', page = 1, append = false) {
+        const perPage  = $('#product-table').data('per-page') || 10;
         $.ajax({
             url: wcFilter.ajaxUrl,
             type: 'POST',
             data: {
-                action: 'search_products',
-                nonce: wcFilter.nonce,
-                search: searchTerm,
-                letter: letter,
-                per_page: $('.show-more-button').data('per-page'),
-                category: wcFilter.category // Always use the category from shortcode
+                action:           'search_products',
+                nonce:            wcFilter.nonce,
+                search:           searchTerm,
+                letter:           letter,
+                page:             page,
+                per_page:         perPage,
+                category:         wcFilter.category,
+                visible_variants: Array.from(visibleVariants)
             },
             beforeSend: function() {
-                $('#product-table tbody').addClass('loading');
+                productTable.addClass('loading');
             },
             success: function(response) {
+                productTable.removeClass('loading');
                 if (response.success) {
-                    productTable.html(response.data.html);
-                    
-                    // Restore variant visibility state
-                    visibleVariants.forEach(productId => {
-                        const $button = $('.toggle-variants[data-id="' + productId + '"]');
-                        const $variantRows = $('.variant-' + productId);
-                        if ($button.length && $variantRows.length) {
-                            $variantRows.addClass('showing').show();
-                            $button.text('HIDE VARIANTS');
-                        }
-                    });
+                    let data = response.data;
 
-                    // Trigger our custom event after updating content
-                    $(document).trigger('wc_product_table_updated');
-                    
-                    // Show/hide pagination based on search/filter status
-                    if (response.data.show_pagination) {
-                        paginationWrapper.show();
-                        
-                        // Update pagination numbers
-                        const totalProducts = response.data.total_products;
-                        const currentEnd = Math.min(perPage, totalProducts);
-                        
-                        $('[data-total-start]').text('1');
-                        $('[data-total-end]').text(currentEnd);
-                        $('.pagination-page-total .font-medium:last').text(totalProducts);
-                        
-                        // Update progress bar
-                        const progressPercentage = (currentEnd / totalProducts) * 100;
-                        $('.pagination-total-item').css('width', progressPercentage + '%');
-                        
-                        // Update show more button
-                        $('.show-more-button')
-                            .data('total', totalProducts)
-                            .data('page', 1)
-                            .data('per-page', perPage);
+                    // If append = true, we add to existing HTML
+                    // else, we replace the entire table body
+                    if (append) {
+                        productTable.append(data.html);
                     } else {
-                        paginationWrapper.hide();
+                        productTable.html(data.html);
                     }
-                }
-            },
-            complete: function() {
-                $('#product-table tbody').removeClass('loading');
-            }
-        });
-    }
 
-    function updateProductTable(response) {
-        if (response.success) {
-            $('#product-table tbody').html(response.data.html);
-            updatePagination(response.data);
-            // Trigger custom event after content update
-            $(document).trigger('wc_product_table_updated');
-        }
-    }
+                    // Update “Showing X–Y of Z total” at the bottom
+                    $('[data-total-start]').text(data.showing_start);
+                    $('[data-total-end]').text(data.showing_end);
+                    $('.pagination-page-total .font-medium:last').text(data.total_products);
 
-    // Search input handler with debounce
-    $('#product-search').on('input', function() {
-        clearTimeout(searchTimeout);
-        const searchTerm = $(this).val();
-        const activeLetter = $('.alphabet-filter.active').data('letter');
-        
-        searchTimeout = setTimeout(function() {
-            updateProducts(searchTerm, activeLetter);
-        }, 300);
-    });
+                    // Update the progress bar
+                    let progressPercentage = (data.showing_end / data.total_products) * 100;
+                    $('.pagination-total-item').css('width', progressPercentage + '%');
 
-    // Clear search
-    $('#product-search').on('search', function() {
-        if ($(this).val() === '') {
-            updateProducts('', 'all');
-        }
-    });
+                    // If has_more is false, hide the “Show More” button
+                    if (!data.has_more) {
+                        $('.pagination-button').hide();
+                    } else {
+                        $('.pagination-button').show();
+                        $('.show-more-button')
+                            .data('page', data.current_page)      // current page
+                            .data('total', data.total_products)   // total
+                            .data('per-page', perPage);
+                    }
 
-    // Alphabet filter handler
-    $('.alphabet-filter').click(function() {
-        $('.alphabet-filter').removeClass('active');
-        $(this).addClass('active');
-        
-        const letter = $(this).data('letter');
-        const searchTerm = $('#product-search').val();
-        
-        updateProducts(searchTerm, letter);
-    });
+                    // If total products <= per_page, no need to show pagination
+                    if (data.total_products <= perPage) {
+                        paginationWrapper.hide();
+                    } else {
+                        paginationWrapper.show();
+                    }
 
-    function performSearch(searchTerm = '', letter = 'all') {
-        jQuery.ajax({
-            url: wcFilter.ajaxUrl,
-            type: 'POST',
-            data: {
-                action: 'search_products',
-                nonce: wcFilter.nonce,
-                search: searchTerm,
-                letter: letter,
-                category: wcFilter.category, // Make sure to include category
-                per_page: wcFilter.per_page,
-                visible_variants: getVisibleVariants()
-            },
-            success: function(response) {
-                if (response.success) {
-                    updateProductTable(response.data);
+                    // Re-apply “visible variants” logic after re-render
+                    restoreVariantVisibility();
                 }
             }
         });
     }
 
-    // Add this function to track visible variants
+    // Restores the variants that were showing before
+    function restoreVariantVisibility() {
+        visibleVariants.forEach(function(productId) {
+            const rows = $(`.variant-${productId}`);
+            if (rows.length > 0) {
+                rows.show().addClass('showing');
+                $(`button.toggle-variants[data-id="${productId}"]`).text('HIDE VARIANTS');
+            }
+        });
+    }
+
+    // Updates the visibleVariants set by scanning the table
     function updateVisibleVariants() {
         visibleVariants.clear();
         $('.variant-row.showing').each(function() {
-            const productId = $(this).attr('class').match(/variant-(\d+)/)[1];
-            visibleVariants.add(parseInt(productId));
-        });
-    }
-
-    // Update the search/filter function
-    function searchProducts(searchTerm = '', letter = '') {
-        const data = {
-            action: 'search_products',
-            nonce: wcFilter.nonce,
-            search: searchTerm,
-            letter: letter,
-            category: wcFilter.category,
-            per_page: wcFilter.per_page,
-            visible_variants: Array.from(visibleVariants)
-        };
-
-        jQuery.post(wcFilter.ajaxUrl, data, function(response) {
-            if (response.success) {
-                jQuery('#product-table tbody').html(response.data.html);
-                updatePagination(response.data);
+            let classes   = $(this).attr('class');
+            let match     = classes.match(/variant-(\d+)/);
+            if (match) {
+                let productId = parseInt(match[1], 10);
+                visibleVariants.add(productId);
             }
         });
     }
 
-    // Remove the old toggle handler and replace with this one
+    /**
+     * Search Input Handler (debounced)
+     */
+    searchInput.on('input', function() {
+        clearTimeout(searchTimeout);
+        let searchTerm = $(this).val();
+        let letter     = $('.alphabet-filter.active').data('letter') || 'all';
+
+        searchTimeout = setTimeout(function() {
+            updateProducts(searchTerm, letter, 1, false);
+        }, searchDelay);
+    });
+
+    // If user clears search
+    searchInput.on('search', function() {
+        if ($(this).val() === '') {
+            let letter = $('.alphabet-filter.active').data('letter') || 'all';
+            updateProducts('', letter, 1, false);
+        }
+    });
+
+    /**
+     * Alphabet Filter Handler
+     */
+    alphabetFilters.on('click', function() {
+        alphabetFilters.removeClass('active');
+        $(this).addClass('active');
+
+        let letter     = $(this).data('letter') || 'all';
+        let searchTerm = searchInput.val();
+
+        updateProducts(searchTerm, letter, 1, false);
+    });
+
+    /**
+     * Show More Handler
+     */
+    $('.show-more-button').on('click', function(e) {
+        e.preventDefault();
+        let nextPage   = parseInt($(this).data('page'), 10) + 1;
+        let total      = parseInt($(this).data('total'), 10);
+        let searchTerm = $('#product-search').val();
+        let letter     = $('.alphabet-filter.active').data('letter') || 'all';
+
+        updateProducts(searchTerm, letter, nextPage, true);
+    });
+
+    /**
+     * Variant Toggle Handler
+     */
     $(document).on('click', '.toggle-variants', function() {
-        const $button = $(this);
-        const productId = $button.data('id');
-        const $variantRows = $('.variant-' + productId);
+        let productId  = $(this).data('id');
+        let variantRows = $(`.variant-${productId}`);
         
-        if ($variantRows.hasClass('showing')) {
-            $variantRows.removeClass('showing').slideUp(300);
-            $button.text('SHOW VARIANTS');
+        if (variantRows.is(':visible')) {
+            // Hide them
+            variantRows.removeClass('showing').slideUp(300);
+            $(this).text('SHOW VARIANTS');
             visibleVariants.delete(productId);
         } else {
-            $variantRows.addClass('showing').slideDown(300);
-            $button.text('HIDE VARIANTS');
+            // Show them
+            variantRows.addClass('showing').slideDown(300);
+            $(this).text('HIDE VARIANTS');
             visibleVariants.add(productId);
         }
-        
-        // Update visible variants tracking
         updateVisibleVariants();
     });
 
-    // Track variant visibility when toggling
-    $(document).on('click', '.toggle-variants', function() {
-        const productId = $(this).data('id');
-        const variantRows = $(`.variant-${productId}`);
-        
-        if (variantRows.first().is(':visible')) {
-            visibleVariants.delete(productId);
-        } else {
-            visibleVariants.add(productId);
-        }
-        
-        variantRows.toggle();
-        updateVisibleVariants();
-    });
 });
