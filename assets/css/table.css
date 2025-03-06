@@ -89,6 +89,15 @@
     position: relative;
     overflow: hidden;
     cursor: pointer;
+    display: inline-block;
+}
+
+/* Ensure the button is visible and clickable on mobile */
+@media (max-width: 768px) {
+    .toggle-variants {
+        display: inline-block;
+        cursor: pointer;
+    }
 }
 
 .toggle-variants:after {
@@ -1361,6 +1370,20 @@
     display: table-row !important;
 }
 
+@media (max-width: 767px) {
+    .variant-row.show {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        margin: 8px 0 !important;
+    }
+    
+    /* Force hide variants when not showing */
+    .variant-row:not(.show) {
+        display: none !important;
+    }
+}
+
 /* Button color updates */
 .add-to-cart,
 .toggle-variants,
@@ -1391,14 +1414,15 @@
     color: #006DB5 !important;
 }
 
-/* Update checkout button */
-#slide-cart .bg-[#232323] {
-    background-color: #006DB5 !important;
+
+#slider-cart h2{
+    font-size: 20px !important;
 }
 
-#slide-cart .bg-[#232323]:hover {
-    background-color: rgba(0, 109, 181, 0.9) !important;
+#slider-cart h4{
+    font-size: 18px !important;
 }
+
 
 /* Progress bar color */
 .pagination-total-item {
@@ -1437,5 +1461,41 @@
 @media (max-width: 767px) {
     .variant-row.showing {
         display: flex !important;
+    }
+}
+
+/* Base variant styles */
+.variant-row {
+    display: none !important;
+    transition: none !important; /* Disable transitions temporarily */
+}
+
+.variant-row.show {
+    display: table-row !important;
+}
+
+/* Mobile specific styles */
+@media (max-width: 767px) {
+    .variant-row.show {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        margin: 8px 0 !important;
+    }
+    
+    /* Ensure variants stay hidden */
+    .variant-row:not(.show) {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
+    }
+    
+    /* Transition class for hiding */
+    .variant-row.hiding {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
     }
 }

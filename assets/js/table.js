@@ -2,22 +2,42 @@ jQuery(document).ready(function($) {
     // Hide all variants initially
     $('.variant-row').hide().removeClass('show');
     
-    // Toggle variants
+    // Toggle variants with improved mobile support and event handling
     $(document).on('click', '.toggle-variants', function(e) {
         e.preventDefault();
         e.stopPropagation();
+        e.stopImmediatePropagation(); // Prevent multiple triggers
         
         const $button = $(this);
         const productId = $button.data('id');
         const $variants = $('.variant-' + productId);
         
         // Toggle show class and visibility
-        if ($variants.first().hasClass('show')) {
-            $variants.removeClass('show').hide();
+        if ($variants.hasClass('show')) {
+            $variants
+                .removeClass('show')
+                .addClass('hiding') // Add transitional class
+                .hide()
+                .removeClass('hiding'); // Remove transitional class
             $button.text('SHOW VARIANTS');
+            
+            // Force hide on mobile with !important
+            $variants.attr('style', 'display: none !important');
         } else {
-            $variants.addClass('show').show();
+            $variants
+                .addClass('show')
+                .show()
+                .removeAttr('style'); // Remove forced styling
             $button.text('HIDE VARIANTS');
+            
+            // Force proper display for mobile
+            if (window.innerWidth <= 767) {
+                $variants.css({
+                    'display': 'flex',
+                    'flex-direction': 'column',
+                    'width': '100%'
+                });
+            }
         }
     });
 
