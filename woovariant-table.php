@@ -378,12 +378,23 @@ function wc_ajax_add_to_cart() {
 
             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
                 $product = $cart_item['data'];
+                $parent_id = $product->is_type('variation') ? $product->get_parent_id() : $product->get_id();
+                
+                // Get variation image or fallback to parent product image
+                $image_id = $product->get_image_id();
+                if (!$image_id && $product->is_type('variation')) {
+                    $image_id = get_post_thumbnail_id($parent_id);
+                }
+                
+                $image_url = wp_get_attachment_image_src($image_id, 'thumbnail');
+                $image_url = $image_url ? $image_url[0] : wc_placeholder_img_src();
+
                 $cart_data['items'][] = array(
                     'key' => $cart_item_key,
                     'name' => $product->get_name(),
                     'quantity' => $cart_item['quantity'],
                     'price' => format_price(WC()->cart->get_product_price($product)),
-                    'image' => wp_get_attachment_image_src(get_post_thumbnail_id($product->get_id()), 'thumbnail')[0],
+                    'image' => $image_url,
                     'variation' => isset($cart_item['variation']) ? implode(', ', $cart_item['variation']) : ''
                 );
             }
@@ -394,7 +405,7 @@ function wc_ajax_add_to_cart() {
     
     wp_send_json_error(array(
         'message' => 'Failed to add product'
-    ));
+     ));
 }
 add_action('wp_ajax_add_to_cart', 'wc_ajax_add_to_cart');
 add_action('wp_ajax_nopriv_add_to_cart', 'wc_ajax_add_to_cart');
@@ -412,12 +423,23 @@ function wc_ajax_get_cart() {
     
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
         $product = $cart_item['data'];
+        $parent_id = $product->is_type('variation') ? $product->get_parent_id() : $product->get_id();
+        
+        // Get variation image or fallback to parent product image
+        $image_id = $product->get_image_id();
+        if (!$image_id && $product->is_type('variation')) {
+            $image_id = get_post_thumbnail_id($parent_id);
+        }
+        
+        $image_url = wp_get_attachment_image_src($image_id, 'thumbnail');
+        $image_url = $image_url ? $image_url[0] : wc_placeholder_img_src();
+
         $cart_data['items'][] = array(
             'key' => $cart_item_key,
             'name' => $product->get_name(),
             'quantity' => $cart_item['quantity'],
             'price' => format_price(WC()->cart->get_product_price($product)),
-            'image' => wp_get_attachment_image_src(get_post_thumbnail_id($product->get_id()), 'thumbnail')[0],
+            'image' => $image_url,
             'variation' => isset($cart_item['variation']) ? implode(', ', $cart_item['variation']) : ''
         );
     }
@@ -492,7 +514,8 @@ function wc_ajax_search_products() {
             array(
                 'taxonomy' => 'product_cat',
                 'field' => 'slug',
-                'terms' => explode(',', $category)
+                'terms' => explode(',', $category),
+                'operator' => 'IN'
             )
         );
     }
@@ -533,7 +556,8 @@ function wc_ajax_search_products() {
         'html' => ob_get_clean(),
         'count' => $loop->found_posts,
         'show_pagination' => empty($search_term) && (empty($letter) || $letter === 'all'),
-        'total_products' => $loop->found_posts
+        'total_products' => $loop->found_posts,
+        'category' => $category // Add this for debugging
     ));
 }
 add_action('wp_ajax_search_products', 'wc_ajax_search_products');

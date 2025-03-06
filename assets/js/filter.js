@@ -130,8 +130,8 @@ jQuery(document).ready(function($) {
         updateProducts(searchTerm, letter);
     });
 
-    function performSearch(searchTerm, letter) {
-        $.ajax({
+    function performSearch(searchTerm = '', letter = 'all') {
+        jQuery.ajax({
             url: wcFilter.ajaxUrl,
             type: 'POST',
             data: {
@@ -139,27 +139,15 @@ jQuery(document).ready(function($) {
                 nonce: wcFilter.nonce,
                 search: searchTerm,
                 letter: letter,
-                category: wcFilter.category // Always include the category
+                category: wcFilter.category, // Make sure to include category
+                per_page: wcFilter.per_page,
+                visible_variants: getVisibleVariants()
             },
             success: function(response) {
                 if (response.success) {
-                    $('#product-table tbody').html(response.data.html);
-                    
-                    // Trigger event with count data
-                    $(document).trigger('productsFiltered', {
-                        count: response.data.count,
-                        total: response.data.total_products
-                    });
-
-                    // Update pagination visibility
-                    if (response.data.show_pagination) {
-                        $('.pagination-button').show();
-                    } else {
-                        $('.pagination-button').hide();
-                    }
+                    updateProductTable(response.data);
                 }
             }
-            // ...rest of the code...
         });
     }
 
