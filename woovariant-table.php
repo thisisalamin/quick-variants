@@ -25,6 +25,10 @@ function wc_product_table_enqueue_scripts() {
     
     // JavaScript for table interactions (variants, pagination, search, filter)
     wp_enqueue_script('wc-product-table', plugins_url('assets/js/table.js', __FILE__), array('jquery'), '1.0', true);
+    wp_localize_script('wc-product-table', 'wcPagination', array(
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce'   => wp_create_nonce('wc_pagination_nonce')
+    ));
 
     // Cart script
     wp_enqueue_script('wc-product-cart', plugins_url('assets/js/cart.js', __FILE__), array('jquery'), '1.0', true);

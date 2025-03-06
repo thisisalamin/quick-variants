@@ -35,14 +35,13 @@ jQuery(document).ready(function($) {
         var perPage = button.data('per-page');
         var total = button.data('total');
         var category = button.data('category');
-        var nonce = wcPagination.nonce;
 
         $.ajax({
             url: wcPagination.ajaxUrl,
             type: 'POST',
             data: {
-                action: 'load_more_products',
-                nonce: nonce,
+                action: 'search_products', // Changed to use the unified search endpoint
+                nonce: wcPagination.nonce,
                 page: page + 1,
                 per_page: perPage,
                 category: category
