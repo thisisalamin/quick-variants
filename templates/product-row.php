@@ -64,7 +64,13 @@ $visible_variants = get_query_var('visible_variants', array());
                      class="w-[60px] h-[60px] object-contain mx-auto" />
             </td>
             <td class="p-4 align-middle !border !border-gray-200">
-                <?php echo strtoupper(implode(', ', $variation['attributes'])); ?>
+                <?php 
+                $attributes = array();
+                foreach ($variation['attributes'] as $name => $value) {
+                    $attributes[] = wc_attribute_label(str_replace('attribute_', '', $name)) . ': ' . ucfirst($value);
+                }
+                echo strtoupper(implode(' / ', $attributes)); 
+                ?>
             </td>
             <td class="p-4 align-middle !border !border-gray-200">
                 <div class="flex flex-col items-center">
