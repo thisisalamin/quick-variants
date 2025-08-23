@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Quick Variants 
+ * Plugin Name: Quick Variants
  * Description: Display WooCommerce products in a table format with expandable variants.
  * Version: 1.0
  * Author: Crafely
@@ -30,6 +30,5 @@ require_once QUICK_VARIANTS_PATH . 'includes/ajax-cart.php';
 require_once QUICK_VARIANTS_PATH . 'includes/ajax-search.php';
 require_once QUICK_VARIANTS_PATH . 'includes/helpers.php';
 require_once QUICK_VARIANTS_PATH . 'includes/admin-settings.php';
-require_once QUICK_VARIANTS_PATH . 'includes/i18n.php';
 
 // Future: activation / deactivation hooks could go here.
