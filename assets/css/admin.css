@@ -15,6 +15,42 @@
   .qv-submit-wrapper { @apply mt-8; }
   .qv-color-wrapper { @apply flex items-center gap-3; }
   .qv-color-preview { @apply h-8 w-8 rounded border border-gray-300 shadow-inner; }
+  /* New settings layout */
+  .qv-settings-wrap { @apply max-w-5xl; }
+  .qv-header-bar { @apply flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6; }
+  .qv-page-title { @apply flex items-center gap-3 text-2xl font-bold tracking-tight; }
+  .qv-page-title .title-text { @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400; }
+  .qv-version { @apply text-[11px] font-semibold px-2 py-0.5 rounded bg-indigo-100 text-indigo-700; }
+  .qv-subtitle { @apply text-sm text-gray-600; }
+  .qv-reset-link { @apply inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-red-600 hover:text-red-700 border border-red-200 hover:border-red-300 rounded-md px-3 py-2 bg-white shadow-sm transition; }
+  .qv-tabs-card { @apply p-0; }
+  .qv-tabs-alt { @apply flex flex-wrap gap-2 border-b border-gray-200 px-6 pt-4 bg-white sticky top-0 z-10; }
+  .qv-tab-btn { @apply relative font-medium text-sm px-4 py-2 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-indigo-600 hover:border-indigo-300 transition shadow-sm; }
+  .qv-tab-btn.active { @apply bg-indigo-50 border-indigo-400 text-indigo-700 shadow; }
+  .qv-form { @apply p-6; }
+  .qv-fields-grid { @apply grid gap-6 md:grid-cols-2; }
+  .qv-field .description { @apply text-xs text-gray-500 mt-1; }
+  .qv-primary-btn { @apply !bg-indigo-600 !border-indigo-600 hover:!bg-indigo-700 hover:!border-indigo-700 font-semibold text-sm px-6 py-3 rounded-md; }
+  .qv-tab-panel { @apply animate-fadeIn; }
+  /* Two-column layout */
+  .qv-layout { @apply w-full flex flex-col lg:flex-row gap-6; }
+  .qv-form-columns { @apply w-full flex flex-col lg:flex-row gap-6; }
+  .qv-col-main { @apply flex-1 flex flex-col gap-6; }
+  .qv-col-side { @apply w-full lg:w-80 flex flex-col gap-6; }
+  .qv-group-title { @apply text-sm font-semibold uppercase tracking-wide text-gray-700 mb-4; }
+  .qv-side-card .qv-group-title { @apply mb-3; }
+  .qv-side-intro { @apply text-xs text-gray-500 mb-4; }
+  .qv-links { @apply list-none m-0 p-0 flex flex-col gap-2; }
+  .qv-link-item { @apply text-sm text-indigo-600 hover:text-indigo-700 font-medium; }
+  .qv-small-note { @apply mt-4 text-[11px] text-gray-500 leading-snug; }
+  .qv-resources { @apply relative; }
+  .qv-sticky-save { @apply mt-8; }
+  @screen lg { .qv-sticky-save { @apply sticky bottom-4 self-start; } }
+}
+
+@layer utilities {
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px);} to { opacity:1; transform:translateY(0);} }
+  .animate-fadeIn { animation: fadeIn .25s ease; }
 }
 
 /* Utilities override for WP admin dark modes (optional) */

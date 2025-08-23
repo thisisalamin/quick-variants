@@ -1,10 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; }
-
-/**
- * Admin settings page for Quick Variants.
- */
 class Quick_Variants_Settings {
 	const OPTION_KEY = 'quick_variants_settings';
 	const NONCE_KEY  = 'quick_variants_settings_nonce';
@@ -21,6 +17,22 @@ class Quick_Variants_Settings {
 	private function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_init', array( $this, 'maybe_handle_reset' ) );
+	}
+
+	/** Reset handler */
+	public function maybe_handle_reset() {
+		if ( ! is_admin() || ! current_user_can( 'manage_options' ) ) {
+			return; }
+		$qv_reset = filter_input( INPUT_GET, 'qv_reset', FILTER_SANITIZE_NUMBER_INT );
+		$nonce    = filter_input( INPUT_GET, '_qvnonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( empty( $qv_reset ) || empty( $nonce ) ) {
+			return; }
+		if ( ! wp_verify_nonce( $nonce, 'qv_reset_defaults' ) ) {
+			return; }
+		delete_option( self::OPTION_KEY );
+		wp_safe_redirect( admin_url( 'admin.php?page=quick-variants-settings&reset=1' ) );
+		exit;
 	}
 
 	public function add_menu() {
@@ -35,121 +47,7 @@ class Quick_Variants_Settings {
 		);
 	}
 
-	public function register_settings() {
-		register_setting( 'quick_variants_settings_group', self::OPTION_KEY, array( $this, 'sanitize_settings' ) );
-
-		add_settings_section(
-			'quick_variants_main_section',
-			__( 'Display Settings', 'quick-variants' ),
-			'__return_false',
-			'quick-variants-settings'
-		);
-
-		add_settings_field(
-			'default_per_page',
-			__( 'Default Products Per Page', 'quick-variants' ),
-			array( $this, 'field_number' ),
-			'quick-variants-settings',
-			'quick_variants_main_section',
-			array(
-				'label_for' => 'default_per_page',
-				'key'       => 'default_per_page',
-				'help'      => __( 'Number of products (rows) to load initially.', 'quick-variants' ),
-				'attrs'     => array(
-					'min' => 1,
-					'max' => 100,
-				),
-			)
-		);
-
-		add_settings_field(
-			'enable_alphabet_filter',
-			__( 'Enable Alphabet Filter', 'quick-variants' ),
-			array( $this, 'field_checkbox' ),
-			'quick-variants-settings',
-			'quick_variants_main_section',
-			array(
-				'label_for' => 'enable_alphabet_filter',
-				'key'       => 'enable_alphabet_filter',
-				'help'      => __( 'Show the A-Z filter row above the table.', 'quick-variants' ),
-			)
-		);
-
-		add_settings_field(
-			'show_slide_cart',
-			__( 'Enable Slide Cart', 'quick-variants' ),
-			array( $this, 'field_checkbox' ),
-			'quick-variants-settings',
-			'quick_variants_main_section',
-			array(
-				'label_for' => 'show_slide_cart',
-				'key'       => 'show_slide_cart',
-				'help'      => __( 'Load and display the slide-out cart template.', 'quick-variants' ),
-			)
-		);
-
-		add_settings_field(
-			'button_color',
-			__( 'Primary Button Hex Color', 'quick-variants' ),
-			array( $this, 'field_text' ),
-			'quick-variants-settings',
-			'quick_variants_main_section',
-			array(
-				'label_for'   => 'button_color',
-				'key'         => 'button_color',
-				'help'        => __( 'Hex color used for Add to Cart / Show More buttons (#006DB5 by default).', 'quick-variants' ),
-				'placeholder' => '#006DB5',
-			)
-		);
-
-		add_settings_field(
-			'table_max_width',
-			__( 'Table Max Width', 'quick-variants' ),
-			array( $this, 'field_text' ),
-			'quick-variants-settings',
-			'quick_variants_main_section',
-			array(
-				'label_for'   => 'table_max_width',
-				'key'         => 'table_max_width',
-				'help'        => __( 'Optional. Examples: 1200px, 90%, 70rem. Leave blank for full width.', 'quick-variants' ),
-				'placeholder' => '1200px',
-			)
-		);
-	}
-
-	public function sanitize_settings( $input ) {
-		$defaults                         = $this->get_defaults();
-		$output                           = array();
-		$output['default_per_page']       = isset( $input['default_per_page'] ) ? max( 1, min( 100, intval( $input['default_per_page'] ) ) ) : $defaults['default_per_page'];
-		$output['enable_alphabet_filter'] = ! empty( $input['enable_alphabet_filter'] ) ? 1 : 0;
-		$output['show_slide_cart']        = ! empty( $input['show_slide_cart'] ) ? 1 : 0;
-		$color                            = isset( $input['button_color'] ) ? sanitize_text_field( $input['button_color'] ) : '';
-		if ( $color && ! preg_match( '/^#?[0-9a-fA-F]{6}$/', $color ) ) {
-			$color = $defaults['button_color'];
-		}
-		if ( $color && $color[0] !== '#' ) {
-			$color = '#' . $color;
-		}
-		$output['button_color'] = $color ?: $defaults['button_color'];
-
-		// Table max width: allow blank, px, %, rem, em.
-		$raw_width = isset( $input['table_max_width'] ) ? trim( $input['table_max_width'] ) : '';
-		if ( $raw_width === '' ) {
-			$output['table_max_width'] = '';
-		} else {
-			if ( preg_match( '/^\d+$/', $raw_width ) ) {
-				$raw_width .= 'px';
-			}
-			if ( preg_match( '/^\d+(px|%|rem|em)$/', $raw_width ) ) {
-				$output['table_max_width'] = $raw_width;
-			} else {
-				$output['table_max_width'] = '';
-			}
-		}
-		return $output;
-	}
-
-	private function get_defaults() {
+	public static function get_defaults() {
 		return array(
 			'default_per_page'       => 10,
 			'enable_alphabet_filter' => 1,
@@ -160,111 +58,236 @@ class Quick_Variants_Settings {
 	}
 
 	public static function get_settings() {
-		$defaults = self::instance()->get_defaults();
-		$current  = get_option( self::OPTION_KEY, array() );
-		return wp_parse_args( $current, $defaults );
+		$saved    = get_option( self::OPTION_KEY, array() );
+		$defaults = self::get_defaults();
+		return wp_parse_args( $saved, $defaults );
 	}
 
-	public function render_page() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return; }
-		$settings = self::get_settings();
-		?>
-		<div class="wrap qv-admin">
-			<div class="qv-card">
-				<h1 class="text-2xl font-bold mb-2 flex items-center gap-2">
-					<span class="qv-bg-gradient bg-clip-text text-transparent"><?php esc_html_e( 'Quick Variants', 'quick-variants' ); ?></span>
-					<span class="text-xs font-medium px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 align-middle">v<?php echo esc_html( QUICK_VARIANTS_VERSION ); ?></span>
+	public function register_settings() {
+		register_setting( 'quick_variants_settings_group', self::OPTION_KEY, array( $this, 'sanitize_settings' ) );
+	}
+
+	public function sanitize_settings( $input ) {
+		$out                           = array();
+		$out['default_per_page']       = max( 1, min( 100, intval( $input['default_per_page'] ?? self::get_defaults()['default_per_page'] ) ) );
+		$out['enable_alphabet_filter'] = empty( $input['enable_alphabet_filter'] ) ? 0 : 1;
+		$out['show_slide_cart']        = empty( $input['show_slide_cart'] ) ? 0 : 1;
+		$out['button_color']           = sanitize_text_field( $input['button_color'] ?? '' );
+		$out['table_max_width']        = sanitize_text_field( $input['table_max_width'] ?? '' );
+		return $out;
+	}
+
+public function render_page() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	$settings         = self::get_settings();
+	$default_per_page = (int) $settings['default_per_page'];
+	$product_cats     = get_terms(
+		array(
+			'taxonomy'   => 'product_cat',
+			'hide_empty' => false,
+		)
+	);
+
+	$reset_url = wp_nonce_url(
+		add_query_arg(
+			array(
+				'page'     => 'quick-variants-settings',
+				'qv_reset' => 1,
+			)
+		),
+		'qv_reset_defaults',
+		'_qvnonce'
+	);
+	?>
+
+	<div class="wrap qv-admin">
+		<!-- Header -->
+		<div class="flex items-center justify-between bg-white shadow p-6 rounded-lg mb-8">
+			<div>
+				<h1 class="text-2xl font-semibold text-gray-800 flex items-center gap-2">
+					<?php esc_html_e( 'Quick Variants', 'quick-variants' ); ?>
+					<span class="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+						v<?php echo esc_html( QUICK_VARIANTS_VERSION ); ?>
+					</span>
 				</h1>
-				<p class="text-sm text-gray-600 mb-6"><?php esc_html_e( 'Customize how the product variants table displays on the front-end.', 'quick-variants' ); ?></p>
-				<form method="post" action="options.php" class="space-y-8">
-					<?php settings_fields( 'quick_variants_settings_group' ); ?>
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-						<div>
-							<h2 class="qv-section-title mb-4"><?php esc_html_e( 'Display Options', 'quick-variants' ); ?></h2>
-							<div class="qv-field">
-								<label for="default_per_page" class="qv-label"><?php esc_html_e( 'Default Products Per Page', 'quick-variants' ); ?></label>
-								<?php
-								$this->field_number(
-									array(
-										'key'   => 'default_per_page',
-										'attrs' => array(
-											'min' => 1,
-											'max' => 100,
-										),
-										'help'  => __( 'Number of rows to load initially.', 'quick-variants' ),
-									)
-								);
-								?>
-							</div>
-							<div class="qv-field">
-								<label for="enable_alphabet_filter" class="qv-label"><?php esc_html_e( 'Alphabet Filter', 'quick-variants' ); ?></label>
-								<?php
-								$this->field_checkbox(
-									array(
-										'key'  => 'enable_alphabet_filter',
-										'help' => __( 'Toggle A-Z filter bar.', 'quick-variants' ),
-									)
-								);
-								?>
-							</div>
-							<div class="qv-field">
-								<label for="show_slide_cart" class="qv-label"><?php esc_html_e( 'Slide Cart', 'quick-variants' ); ?></label>
-								<?php
-								$this->field_checkbox(
-									array(
-										'key'  => 'show_slide_cart',
-										'help' => __( 'Enable the slide-out cart drawer.', 'quick-variants' ),
-									)
-								);
-								?>
-							</div>
-						</div>
-						<div>
-							<h2 class="qv-section-title mb-4"><?php esc_html_e( 'Branding', 'quick-variants' ); ?></h2>
-							<div class="qv-field">
-								<label for="button_color" class="qv-label"><?php esc_html_e( 'Primary Button Color', 'quick-variants' ); ?></label>
-								<div class="qv-color-wrapper">
-									<?php
-									$this->field_text(
-										array(
-											'key'         => 'button_color',
-											'placeholder' => '#006DB5',
-											'help'        => __( 'Used for buttons & progress bar.', 'quick-variants' ),
-										)
-									);
-									?>
-								</div>
-							</div>
-							<div class="qv-field">
-								<label for="table_max_width" class="qv-label"><?php esc_html_e( 'Table Max Width', 'quick-variants' ); ?></label>
-								<?php
-								$this->field_text(
-									array(
-										'key'         => 'table_max_width',
-										'placeholder' => '1200px',
-										'help'        => __( 'Leave blank for full width.', 'quick-variants' ),
-									)
-								);
-								?>
-							</div>
-							<div class="mt-8 pt-6 border-t border-gray-200">
-								<h2 class="qv-section-title mb-2"><?php esc_html_e( 'Shortcode', 'quick-variants' ); ?></h2>
-								<p class="text-sm font-mono bg-gray-50 border border-gray-200 rounded px-3 py-2 inline-block">[quick_variants]</p>
-								<p class="text-xs text-gray-500 mt-2"><?php esc_html_e( 'Override defaults:', 'quick-variants' ); ?> <code>[quick_variants per_page="15" category="hoodies"]</code></p>
-							</div>
-						</div>
-					</div>
-					<div class="qv-submit-wrapper">
-						<?php submit_button( __( 'Save Settings', 'quick-variants' ), 'primary large', 'submit', false, array( 'class' => 'qv-save-button button button-primary' ) ); ?>
-					</div>
-				</form>
+				<p class="text-gray-500 text-sm">
+					<?php esc_html_e( 'Configuration for product table & cart behaviors.', 'quick-variants' ); ?>
+				</p>
+			</div>
+			<div>
+				<a href="<?php echo esc_url( $reset_url ); ?>"
+				   onclick="return confirm('<?php echo esc_js( __( 'Reset all settings to defaults? This cannot be undone.', 'quick-variants' ) ); ?>');"
+				   class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100">
+					&#8635; <?php esc_html_e( 'Reset', 'quick-variants' ); ?>
+				</a>
 			</div>
 		</div>
-		<?php
-	}
 
-	/* ===== Field Callbacks ===== */
+		<form method="post" action="options.php" class="grid grid-cols-1 lg:grid-cols-3 gap-6" id="qv-settings-form">
+			<?php settings_fields( 'quick_variants_settings_group' ); ?>
+
+			<!-- Main settings -->
+			<div class="lg:col-span-2 space-y-6">
+				<!-- General -->
+				<div class="bg-white shadow rounded-lg p-6">
+					<h2 class="text-lg font-medium text-gray-800 mb-4"><?php esc_html_e( 'General', 'quick-variants' ); ?></h2>
+					<div class="space-y-4">
+						<div>
+							<label for="default_per_page" class="block font-medium text-gray-700">
+								<?php esc_html_e( 'Default Products Per Page', 'quick-variants' ); ?>
+							</label>
+							<?php $this->field_number([
+								'key'   => 'default_per_page',
+								'attrs' => ['min' => 1, 'max' => 100],
+								'help'  => __( 'Rows initially shown (higher may slow first load).', 'quick-variants' ),
+							]); ?>
+						</div>
+					</div>
+				</div>
+
+				<!-- Display -->
+				<div class="bg-white shadow rounded-lg p-6">
+					<h2 class="text-lg font-medium text-gray-800 mb-4"><?php esc_html_e( 'Display Options', 'quick-variants' ); ?></h2>
+					<div class="space-y-4">
+						<div>
+							<label class="block font-medium text-gray-700">
+								<?php esc_html_e( 'Alphabet Filter', 'quick-variants' ); ?>
+							</label>
+							<?php $this->field_checkbox([
+								'key'  => 'enable_alphabet_filter',
+								'help' => __( 'Show A–Z filter bar.', 'quick-variants' ),
+							]); ?>
+						</div>
+						<div>
+							<label class="block font-medium text-gray-700">
+								<?php esc_html_e( 'Slide Cart Drawer', 'quick-variants' ); ?>
+							</label>
+							<?php $this->field_checkbox([
+								'key'  => 'show_slide_cart',
+								'help' => __( 'Open slide cart after add to cart.', 'quick-variants' ),
+							]); ?>
+						</div>
+						<div>
+							<label class="block font-medium text-gray-700">
+								<?php esc_html_e( 'Table Max Width', 'quick-variants' ); ?>
+							</label>
+							<?php $this->field_text([
+								'key'         => 'table_max_width',
+								'placeholder' => '1200px',
+								'help'        => __( '1200px, 90%, 70rem or blank for full width.', 'quick-variants' ),
+							]); ?>
+						</div>
+					</div>
+				</div>
+
+				<!-- Branding -->
+				<div class="bg-white shadow rounded-lg p-6">
+					<h2 class="text-lg font-medium text-gray-800 mb-4"><?php esc_html_e( 'Branding', 'quick-variants' ); ?></h2>
+					<div class="space-y-4">
+						<div>
+							<label class="block font-medium text-gray-700">
+								<?php esc_html_e( 'Primary Button Color', 'quick-variants' ); ?>
+							</label>
+							<div class="flex items-center gap-3">
+								<?php $this->field_text([
+									'key'         => 'button_color',
+									'placeholder' => '#006DB5',
+									'help'        => __( 'Used for primary buttons & progress bar.', 'quick-variants' ),
+								]); ?>
+								<span class="inline-block w-10 h-10 rounded border" style="background:<?php echo esc_attr( $settings['button_color'] ); ?>"></span>
+							</div>
+						</div>
+						<div>
+							<button type="button" id="qv-preview-button"
+								class="px-4 py-2 rounded text-white font-medium"
+								style="background:<?php echo esc_attr( $settings['button_color'] ); ?>;border-color:<?php echo esc_attr( $settings['button_color'] ); ?>">
+								<?php esc_html_e( 'Sample Button', 'quick-variants' ); ?>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Sidebar -->
+			<div class="space-y-6">
+				<!-- Shortcode Generator -->
+				<div class="bg-white shadow rounded-lg p-6">
+					<h2 class="text-lg font-medium text-gray-800 mb-4"><?php esc_html_e( 'Shortcode Generator', 'quick-variants' ); ?></h2>
+					<p class="text-sm text-gray-500 mb-4"><?php esc_html_e( 'Compose a shortcode quickly.', 'quick-variants' ); ?></p>
+
+					<div class="space-y-4">
+						<div>
+							<label for="qv-gen-per-page" class="block font-medium text-gray-700">
+								<?php esc_html_e( 'Products Per Page (override)', 'quick-variants' ); ?>
+							</label>
+							<input type="number" min="1" max="100" id="qv-gen-per-page" class="w-24 border rounded px-2 py-1" placeholder="<?php echo esc_attr( $default_per_page ); ?>" />
+							<p class="text-xs text-gray-500"><?php printf( esc_html__( 'Blank = default (%d).', 'quick-variants' ), $default_per_page ); ?></p>
+						</div>
+
+						<div>
+							<label for="qv-cat-search" class="block font-medium text-gray-700">
+								<?php esc_html_e( 'Limit to Categories', 'quick-variants' ); ?>
+							</label>
+							<input type="text" id="qv-cat-search" placeholder="<?php esc_attr_e( 'Search categories…', 'quick-variants' ); ?>" class="w-full border rounded px-2 py-1 mb-2" />
+
+							<?php if ( ! empty( $product_cats ) && ! is_wp_error( $product_cats ) ) : ?>
+								<div class="flex gap-2 mb-2">
+									<button type="button" class="px-2 py-1 text-xs bg-gray-100 border rounded hover:bg-gray-200" id="qv-cat-select-all">&check; <?php esc_html_e( 'All', 'quick-variants' ); ?></button>
+									<button type="button" class="px-2 py-1 text-xs bg-gray-100 border rounded hover:bg-gray-200" id="qv-cat-clear">&times; <?php esc_html_e( 'Clear', 'quick-variants' ); ?></button>
+								</div>
+								<div class="max-h-40 overflow-auto border rounded p-2 bg-gray-50 space-y-1">
+									<?php foreach ( $product_cats as $cat ) : ?>
+										<label class="flex items-center gap-2 text-sm">
+											<input type="checkbox" class="qv-gen-cat" value="<?php echo esc_attr( $cat->slug ); ?>" />
+											<span><?php echo esc_html( $cat->name ); ?></span>
+										</label>
+									<?php endforeach; ?>
+								</div>
+								<p class="text-xs text-gray-500 mt-1"><?php esc_html_e( 'Select none for all products.', 'quick-variants' ); ?></p>
+							<?php else : ?>
+								<p class="text-xs text-gray-500"><?php esc_html_e( 'No product categories found.', 'quick-variants' ); ?></p>
+							<?php endif; ?>
+						</div>
+
+						<div>
+							<label class="block font-medium text-gray-700"><?php esc_html_e( 'Generated Shortcode', 'quick-variants' ); ?></label>
+							<div class="flex items-center gap-2">
+								<input type="text" readonly id="qv-generated-shortcode" class="flex-1 border rounded px-2 py-1 font-mono text-sm bg-gray-50" value="[quick_variants]" />
+								<button type="button" class="px-3 py-1 bg-gray-800 text-white text-sm rounded" id="qv-copy-shortcode" data-copied-text="<?php esc_attr_e( 'Copied!', 'quick-variants' ); ?>">
+									<?php esc_html_e( 'Copy', 'quick-variants' ); ?>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Resources -->
+				<div class="bg-white shadow rounded-lg p-6">
+					<h2 class="text-lg font-medium text-gray-800 mb-4"><?php esc_html_e( 'Resources', 'quick-variants' ); ?></h2>
+					<ul class="space-y-2">
+						<li><a href="https://example.com/docs" target="_blank" class="text-blue-600 hover:underline"><?php esc_html_e( 'Documentation', 'quick-variants' ); ?></a></li>
+						<li><a href="mailto:support@example.com" class="text-blue-600 hover:underline"><?php esc_html_e( 'Support', 'quick-variants' ); ?></a></li>
+						<li><a href="https://example.com/changelog" target="_blank" class="text-blue-600 hover:underline"><?php esc_html_e( 'Changelog', 'quick-variants' ); ?></a></li>
+					</ul>
+					<p class="text-xs text-gray-500 mt-3"><?php esc_html_e( 'Need custom tweaks? Reach out via support.', 'quick-variants' ); ?></p>
+				</div>
+			</div>
+
+			<!-- Sticky Save -->
+			<div class="lg:col-span-3 flex justify-end mt-6">
+				<?php submit_button( __( 'Save Settings', 'quick-variants' ), 'primary large', 'submit', false, [ 'class' => 'px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow' ] ); ?>
+			</div>
+		</form>
+	</div>
+
+	<?php
+}
+
+
+	/* Field helpers */
 	public function field_number( $args ) {
 		$settings = self::get_settings();
 		$key      = $args['key'];
