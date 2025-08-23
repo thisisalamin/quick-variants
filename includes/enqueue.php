@@ -42,7 +42,10 @@ function quick_variants_enqueue_assets() {
 	// Dynamic button color from settings.
 	$color = quick_variants_get_setting( 'button_color' );
 	if ( $color ) {
-		$dynamic_css = ':root{--qv-btn-color:' . esc_attr( $color ) . ';} .add-to-cart,.toggle-variants,.show-more-button,.alphabet-filter.active{background-color:var(--qv-btn-color)!important;border-color:var(--qv-btn-color)!important;} .add-to-cart:hover,.toggle-variants:hover,.show-more-button:hover{color:var(--qv-btn-color)!important;} .pagination-total-item{background-color:var(--qv-btn-color)!important;}';
+		$dynamic_css = ':root{--qv-btn-color:' . esc_attr( $color ) . ';}'
+			. ' .add-to-cart,.toggle-variants,.show-more-button,.alphabet-filter.active,.qv-cart-btn.primary{background-color:var(--qv-btn-color)!important;border-color:var(--qv-btn-color)!important;}'
+			. ' .add-to-cart:hover,.toggle-variants:hover,.show-more-button:hover,.qv-cart-btn.primary:hover{color:var(--qv-btn-color)!important;}'
+			. ' .pagination-total-item{background-color:var(--qv-btn-color)!important;}';
 		wp_add_inline_style( 'quick-variants-custom', $dynamic_css );
 	}
 }
