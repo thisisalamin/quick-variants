@@ -1,13 +1,18 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./*.php", // Main plugin directory
-    "./templates/**/*.php", // Template folder
-    "./assets/js/**/*.js", // JavaScript files inside assets
-    "./assets/css/**/*.css", // CSS files inside assets
+    './*.php',
+    './templates/**/*.php',
+    './includes/**/*.php',
+    './assets/js/**/*.js',
+    './assets/css/**/*.css'
   ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
+  safelist: [
+    'bg-[#232323]',
+    'w-[400px]',
+    'w-[120px]',
+    'w-[180px]'
+  ],
+  theme: { extend: {} },
+  plugins: []
 };
