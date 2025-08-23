@@ -31,7 +31,9 @@ jQuery(document).ready(function($) {
                         button.removeClass('bg-green-600').addClass('bg-[#232323]').text(originalText);
                     }, 2000);
                 } else {
-                    alert('Failed to add product to cart');
+                    const msg = (response.data && response.data.message) ? response.data.message : 'Failed to add product to cart';
+                    alert(msg);
+                    button.text(originalText);
                 }
             },
             error: function() {
@@ -42,6 +44,7 @@ jQuery(document).ready(function($) {
             }
         });
     });
+
 
     // Toggle Cart Slide
     $('#close-cart, #cart-overlay').on('click', function() {

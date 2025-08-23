@@ -10,12 +10,47 @@ function quick_variants_ajax_add_to_cart() {
 	$product_id = isset( $_POST['product_id'] ) ? intval( $_POST['product_id'] ) : 0;
 	$quantity   = isset( $_POST['quantity'] ) ? intval( $_POST['quantity'] ) : 1;
 	if ( $product_id > 0 ) {
+		// Clear any lingering notices to capture only current attempt.
+		wc_clear_notices();
 		$added = WC()->cart->add_to_cart( $product_id, $quantity );
 		if ( $added ) {
 			wp_send_json_success( quick_variants_get_cart_payload() );
 		}
+		// Collect WooCommerce notices (errors / validation messages).
+		$notices      = wc_get_notices();
+		$error_msgs   = array();
+		$notice_types = array( 'error', 'notice', 'success' ); // prioritize error but gather all for context.
+		foreach ( $notice_types as $type ) {
+			if ( ! empty( $notices[ $type ] ) ) {
+				foreach ( $notices[ $type ] as $notice ) {
+					if ( isset( $notice['notice'] ) ) {
+						$error_msgs[] = wp_strip_all_tags( $notice['notice'] );
+					}
+				}
+			}
+		}
+		wc_clear_notices();
+		if ( empty( $error_msgs ) ) {
+			$error_msgs[] = __( 'Failed to add product to cart.', 'quick-variants' );
+		}
+		// Create simplified messages (e.g., "Out of stock") when possible.
+		$simplified = array();
+		foreach ( $error_msgs as $msg ) {
+			if ( stripos( $msg, 'out of stock' ) !== false ) {
+				$simplified[] = __( 'Out of stock', 'quick-variants' );
+			} else {
+				$simplified[] = $msg;
+			}
+		}
+		wp_send_json_error(
+			array(
+				'message'      => implode( ' ', array_unique( $simplified ) ),
+				'full_message' => implode( ' ', $error_msgs ),
+				'product_id'   => $product_id,
+			)
+		);
 	}
-	wp_send_json_error( array( 'message' => 'Failed to add product' ) );
+	wp_send_json_error( array( 'message' => __( 'Invalid product.', 'quick-variants' ) ) );
 }
 add_action( 'wp_ajax_add_to_cart', 'quick_variants_ajax_add_to_cart' );
 add_action( 'wp_ajax_nopriv_add_to_cart', 'quick_variants_ajax_add_to_cart' );
