@@ -43,19 +43,29 @@ $visible_variants = get_query_var( 'visible_variants', array() );
 		<?php endif; ?>
 	</td>
 	<td class="p-4 align-middle !border !border-gray-200 text-center">
-		<?php if ( $product->is_type( 'variable' ) ) : ?>
-			<button class="toggle-variants relative inline-flex items-center justify-center gap-2 bg-[#232323] text-white px-4 py-2.5 text-[13px] font-semibold rounded-md hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 w-full mx-auto shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-black/40"
-					data-id="<?php echo $product->get_id(); ?>">
-				<span class="pointer-events-none">
-					<?php echo in_array( $product->get_id(), $visible_variants, true ) ? esc_html__( 'Hide variants', 'quick-variants' ) : esc_html__( 'Show variants', 'quick-variants' ); ?>
-				</span>
+		<div class="flex items-center gap-2 justify-center">
+			<?php if ( $product->is_type( 'variable' ) ) : ?>
+				<button class="toggle-variants relative inline-flex items-center justify-center gap-2 bg-[#232323] text-white px-4 py-2.5 text-[13px] font-semibold rounded-md hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-black/40"
+						data-id="<?php echo $product->get_id(); ?>">
+					<span class="pointer-events-none">
+						<?php echo in_array( $product->get_id(), $visible_variants, true ) ? esc_html__( 'Hide variants', 'quick-variants' ) : esc_html__( 'Show variants', 'quick-variants' ); ?>
+					</span>
+				</button>
+			<?php else : ?>
+				<button class="add-to-cart relative inline-flex items-center justify-center gap-2 bg-[#232323] text-white px-4 py-2.5 text-[13px] font-semibold rounded-md hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-black/40"
+						data-id="<?php echo $product->get_id(); ?>">
+					<?php esc_html_e( 'Add to cart', 'quick-variants' ); ?>
+				</button>
+			<?php endif; ?>
+
+			<!-- Quick view button -->
+			<button class="qv-quick-view-btn inline-flex items-center justify-center p-2 rounded-md border hover:bg-gray-50" title="<?php esc_attr_e( 'Quick view', 'quick-variants' ); ?>" data-id="<?php echo $product->get_id(); ?>">
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+					<path d="M10 3C5 3 1.73 6.11 1 10c.73 3.89 4 7 9 7s8.27-3.11 9-7c-.73-3.89-4-7-9-7zm0 12a5 5 0 110-10 5 5 0 010 10z" />
+					<path d="M10 7a3 3 0 100 6 3 3 0 000-6z" />
+				</svg>
 			</button>
-		<?php else : ?>
-			<button class="add-to-cart relative inline-flex items-center justify-center gap-2 bg-[#232323] text-white px-4 py-2.5 text-[13px] font-semibold rounded-md hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 w-full mx-auto shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-black/40"
-					data-id="<?php echo $product->get_id(); ?>">
-				<?php esc_html_e( 'Add to cart', 'quick-variants' ); ?>
-			</button>
-		<?php endif; ?>
+		</div>
 	</td>
 </tr>
 
@@ -109,10 +119,18 @@ $visible_variants = get_query_var( 'visible_variants', array() );
 				</div>
 			</td>
 			<td class="p-4 align-middle !border !border-gray-200">
-				<button class="add-to-cart relative inline-flex items-center justify-center gap-2 bg-[#232323] text-white px-4 py-2.5 text-[13px] font-semibold rounded-md hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-black/40"
-						data-id="<?php echo $variation['variation_id']; ?>">
-					<?php esc_html_e( 'Add to cart', 'quick-variants' ); ?>
-				</button>
+				<div class="flex items-center gap-2">
+					<button class="add-to-cart relative inline-flex items-center justify-center gap-2 bg-[#232323] text-white px-4 py-2.5 text-[13px] font-semibold rounded-md hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-black/40"
+							data-id="<?php echo $variation['variation_id']; ?>">
+						<?php esc_html_e( 'Add to cart', 'quick-variants' ); ?>
+					</button>
+					<button class="qv-quick-view-btn inline-flex items-center justify-center p-2 rounded-md border hover:bg-gray-50" title="<?php esc_attr_e( 'Quick view', 'quick-variants' ); ?>" data-id="<?php echo $variation['variation_id']; ?>">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+							<path d="M10 3C5 3 1.73 6.11 1 10c.73 3.89 4 7 9 7s8.27-3.11 9-7c-.73-3.89-4-7-9-7zm0 12a5 5 0 110-10 5 5 0 010 10z" />
+							<path d="M10 7a3 3 0 100 6 3 3 0 000-6z" />
+						</svg>
+					</button>
+				</div>
 			</td>
 		</tr>
 	<?php endforeach; ?>

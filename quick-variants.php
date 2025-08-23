@@ -30,5 +30,7 @@ require_once QUICK_VARIANTS_PATH . 'includes/ajax-cart.php';
 require_once QUICK_VARIANTS_PATH . 'includes/ajax-search.php';
 require_once QUICK_VARIANTS_PATH . 'includes/helpers.php';
 require_once QUICK_VARIANTS_PATH . 'includes/admin-settings.php';
+// Quick view AJAX handler
+require_once QUICK_VARIANTS_PATH . 'includes/ajax-quick-view.php';
 
 // Future: activation / deactivation hooks could go here.

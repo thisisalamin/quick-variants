@@ -38,8 +38,8 @@
 					<th style="width:120px !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php esc_html_e( 'Images', 'quick-variants' ); ?></th>
 					<th style="width:50% !important" class="p-4 align-middle text-left font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200 w-[400px]"><?php esc_html_e( 'Product', 'quick-variants' ); ?></th>
 					<th style="width:30% !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php esc_html_e( 'Price', 'quick-variants' ); ?></th>
-					<th style="width:100px !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php esc_html_e( 'Qty', 'quick-variants' ); ?></th>
-					<th style="width:180px !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php esc_html_e( 'Options', 'quick-variants' ); ?></th>
+					<th style="width:120px !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php esc_html_e( 'Qty', 'quick-variants' ); ?></th>
+					<th style="width:250px !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php esc_html_e( 'Options', 'quick-variants' ); ?></th>
 				</tr>
 				</thead>
 				<tbody>

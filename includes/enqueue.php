@@ -39,6 +39,17 @@ function quick_variants_enqueue_assets() {
 		)
 	);
 
+	// Quick view
+	wp_enqueue_script( 'quick-variants-quick-view', QUICK_VARIANTS_URL . 'assets/js/quick-view.js', array( 'jquery' ), QUICK_VARIANTS_VERSION, true );
+	wp_localize_script(
+		'quick-variants-quick-view',
+		'wcQuickView',
+		array(
+			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			'nonce'   => wp_create_nonce( 'wc_filter_nonce' ),
+		)
+	);
+
 	// Dynamic button color from settings.
 	$color = quick_variants_get_setting( 'button_color' );
 	if ( $color ) {
