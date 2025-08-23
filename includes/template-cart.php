@@ -40,4 +40,9 @@ function quick_variants_cart_template() {
 	<div id="cart-overlay"></div>
 	<?php
 }
-add_action( 'wp_footer', 'quick_variants_cart_template' );
+function quick_variants_maybe_hook_cart_template() {
+	if ( quick_variants_get_setting( 'show_slide_cart' ) ) {
+		add_action( 'wp_footer', 'quick_variants_cart_template' );
+	}
+}
+add_action( 'init', 'quick_variants_maybe_hook_cart_template' );

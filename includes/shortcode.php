@@ -6,10 +6,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Render product table shortcode.
  */
 function quick_variants_shortcode( $atts ) {
-	$atts = shortcode_atts(
+	$default_per_page = (int) quick_variants_get_setting( 'default_per_page' );
+	$atts             = shortcode_atts(
 		array(
 			'category' => '',
-			'per_page' => 10,
+			'per_page' => $default_per_page,
 		),
 		$atts
 	);
@@ -63,6 +64,8 @@ function quick_variants_shortcode( $atts ) {
 	);
 
 	ob_start();
+	$enable_alpha = quick_variants_get_setting( 'enable_alphabet_filter' );
+	$button_color = quick_variants_get_setting( 'button_color' );
 	include QUICK_VARIANTS_PATH . 'templates/table-wrapper.php';
 	return ob_get_clean();
 }

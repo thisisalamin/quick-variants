@@ -11,7 +11,6 @@
   "keywords": ["wordpress", "woocommerce", "product-table", "variants", "quick-variants"],
   "author": "Mohamed Alamin",
   "license": "GPL2",
-  "description": "Quick Variants - WooCommerce Variant Product Table Plugin",
   "devDependencies": {
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.3",
