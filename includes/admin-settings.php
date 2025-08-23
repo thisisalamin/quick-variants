@@ -101,6 +101,20 @@ class Quick_Variants_Settings {
 				'placeholder' => '#006DB5',
 			)
 		);
+
+		add_settings_field(
+			'table_max_width',
+			__( 'Table Max Width', 'quick-variants' ),
+			array( $this, 'field_text' ),
+			'quick-variants-settings',
+			'quick_variants_main_section',
+			array(
+				'label_for'   => 'table_max_width',
+				'key'         => 'table_max_width',
+				'help'        => __( 'Optional. Examples: 1200px, 90%, 70rem. Leave blank for full width.', 'quick-variants' ),
+				'placeholder' => '1200px',
+			)
+		);
 	}
 
 	public function sanitize_settings( $input ) {
@@ -117,6 +131,21 @@ class Quick_Variants_Settings {
 			$color = '#' . $color;
 		}
 		$output['button_color'] = $color ?: $defaults['button_color'];
+
+		// Table max width: allow blank, px, %, rem, em.
+		$raw_width = isset( $input['table_max_width'] ) ? trim( $input['table_max_width'] ) : '';
+		if ( $raw_width === '' ) {
+			$output['table_max_width'] = '';
+		} else {
+			if ( preg_match( '/^\d+$/', $raw_width ) ) {
+				$raw_width .= 'px';
+			}
+			if ( preg_match( '/^\d+(px|%|rem|em)$/', $raw_width ) ) {
+				$output['table_max_width'] = $raw_width;
+			} else {
+				$output['table_max_width'] = '';
+			}
+		}
 		return $output;
 	}
 
@@ -126,6 +155,7 @@ class Quick_Variants_Settings {
 			'enable_alphabet_filter' => 1,
 			'show_slide_cart'        => 1,
 			'button_color'           => '#006DB5',
+			'table_max_width'        => '',
 		);
 	}
 
@@ -205,6 +235,18 @@ class Quick_Variants_Settings {
 									);
 									?>
 								</div>
+							</div>
+							<div class="qv-field">
+								<label for="table_max_width" class="qv-label"><?php esc_html_e( 'Table Max Width', 'quick-variants' ); ?></label>
+								<?php
+								$this->field_text(
+									array(
+										'key'         => 'table_max_width',
+										'placeholder' => '1200px',
+										'help'        => __( 'Leave blank for full width.', 'quick-variants' ),
+									)
+								);
+								?>
 							</div>
 							<div class="mt-8 pt-6 border-t border-gray-200">
 								<h2 class="qv-section-title mb-2"><?php esc_html_e( 'Shortcode', 'quick-variants' ); ?></h2>

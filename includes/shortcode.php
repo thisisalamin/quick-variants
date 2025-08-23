@@ -64,8 +64,9 @@ function quick_variants_shortcode( $atts ) {
 	);
 
 	ob_start();
-	$enable_alpha = quick_variants_get_setting( 'enable_alphabet_filter' );
-	$button_color = quick_variants_get_setting( 'button_color' );
+	$enable_alpha    = quick_variants_get_setting( 'enable_alphabet_filter' );
+	$button_color    = quick_variants_get_setting( 'button_color' );
+	$table_max_width = quick_variants_get_setting( 'table_max_width' );
 	include QUICK_VARIANTS_PATH . 'templates/table-wrapper.php';
 	return ob_get_clean();
 }
