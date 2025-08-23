@@ -7,7 +7,9 @@ jQuery(document).ready(function($) {
         const productId = button.data('id');
         const quantity = button.closest('tr').find('input[type="number"]').val() || 1;
 
-        button.prop('disabled', true).text('ADDING...');
+        // Store original button text
+        const originalText = button.text();
+        button.prop('disabled', true).text('Adding...');
 
         $.ajax({
             url: wcCart.ajaxUrl,
@@ -22,21 +24,21 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     updateCartDisplay(response.data);
                     openCart();
-                    
-                    buttonContainer.html(`
-                        <button class="add-to-cart bg-black text-white px-4 py-2 text-sm hover:bg-black/80 transition-colors mb-2 w-full font-bold" data-id="${productId}">
-                            ADD MORE
-                        </button>
-                        <div class="added-status bg-green-500 text-white px-4 py-2 text-sm text-center w-full mb-2 font-bold">
-                            ADDED
-                        </div>
-                    `);
+
+                    // Show success feedback temporarily
+                    button.removeClass('bg-[#232323]').addClass('bg-green-600').text('Added!');
+                    setTimeout(() => {
+                        button.removeClass('bg-green-600').addClass('bg-[#232323]').text(originalText);
+                    }, 2000);
+                } else {
+                    alert('Failed to add product to cart');
                 }
             },
+            error: function() {
+                alert('Error adding product to cart');
+            },
             complete: function() {
-                if (!buttonContainer.find('.added-status').length) {
-                    button.prop('disabled', false).text('ADD TO CART');
-                }
+                button.prop('disabled', false);
             }
         });
     });
@@ -63,9 +65,9 @@ jQuery(document).ready(function($) {
                         <h4 class="font-medium">${item.name}</h4>
                         ${item.variation ? `<p class="text-sm text-gray-500">${item.variation}</p>` : ''}
                         <div class="flex items-center mt-2">
-                            <input type="number" 
-                                   value="${item.quantity}" 
-                                   min="1" 
+                            <input type="number"
+                                   value="${item.quantity}"
+                                   min="1"
                                    class="w-16 p-1 border rounded cart-qty-input text-center">
                             <span class="ml-4">${item.price}</span>
                         </div>

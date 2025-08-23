@@ -159,7 +159,7 @@ jQuery(document).ready(function($) {
     $(document).on('click', '.toggle-variants', function() {
         let productId  = $(this).data('id');
         let variantRows = $(`.variant-${productId}`);
-        
+
         if (variantRows.is(':visible')) {
             // Hide them
             variantRows.removeClass('showing').slideUp(300);

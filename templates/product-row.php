@@ -72,8 +72,18 @@ $visible_variants = get_query_var( 'visible_variants', array() );
 		<tr class="variant-row variant-<?php echo $product->get_id(); ?> !border-b !border-gray-200 bg-white even:bg-gray-50 hover:bg-[#f1f7ff] transition-colors"
 			style="display: <?php echo $is_visible ? 'table-row' : 'none'; ?>;">
 			<td class="p-4 align-middle !border !border-gray-200">
-				<img src="<?php echo esc_url( $variation['image']['url'] ); ?>"
-					alt="<?php echo esc_attr( $variation['variation_description'] ); ?>"
+				<?php
+				$variation_image_url = '';
+				if ( ! empty( $variation['image']['url'] ) ) {
+					$variation_image_url = $variation['image']['url'];
+				} else {
+					// Fallback to parent product image
+					$parent_image        = wp_get_attachment_image_src( get_post_thumbnail_id( $product->get_id() ), 'full' );
+					$variation_image_url = $parent_image ? $parent_image[0] : wc_placeholder_img_src();
+				}
+				?>
+				<img src="<?php echo esc_url( $variation_image_url ); ?>"
+					alt="<?php echo esc_attr( $product->get_name() . ' - ' . implode( ', ', array_values( $variation['attributes'] ) ) ); ?>"
 					class="w-[60px] h-[60px] object-contain mx-auto" />
 			</td>
 			<td class="p-4 align-middle !border !border-gray-200">
