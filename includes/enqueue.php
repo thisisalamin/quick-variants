@@ -53,6 +53,7 @@ function quick_variants_admin_assets( $hook ) {
 	if ( $hook !== 'toplevel_page_quick-variants-settings' ) {
 		return; }
 	wp_enqueue_style( 'wp-color-picker' );
+	wp_enqueue_style( 'quick-variants-admin', QUICK_VARIANTS_URL . 'assets/css/dist/admin.css', array(), QUICK_VARIANTS_VERSION );
 	wp_enqueue_script( 'quick-variants-admin', QUICK_VARIANTS_URL . 'assets/js/admin.js', array( 'wp-color-picker' ), QUICK_VARIANTS_VERSION, true );
 }
 add_action( 'admin_enqueue_scripts', 'quick_variants_admin_assets' );

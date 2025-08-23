@@ -5,8 +5,11 @@
   "main": "tailwind.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tailwindcss -i ./assets/css/style.css -o ./assets/css/dist/style.css",
-    "watch": "tailwindcss -i ./assets/css/style.css -o ./assets/css/dist/style.css --watch"
+    "build": "tailwindcss -i ./assets/css/style.css -o ./assets/css/dist/style.css && tailwindcss -i ./assets/css/admin.css -o ./assets/css/dist/admin.css",
+    "build:frontend": "tailwindcss -i ./assets/css/style.css -o ./assets/css/dist/style.css",
+    "build:admin": "tailwindcss -i ./assets/css/admin.css -o ./assets/css/dist/admin.css",
+    "watch": "tailwindcss -i ./assets/css/style.css -o ./assets/css/dist/style.css --watch",
+    "watch:admin": "tailwindcss -i ./assets/css/admin.css -o ./assets/css/dist/admin.css --watch"
   },
   "keywords": ["wordpress", "woocommerce", "product-table", "variants", "quick-variants"],
   "author": "Mohamed Alamin",

@@ -140,17 +140,84 @@ class Quick_Variants_Settings {
 			return; }
 		$settings = self::get_settings();
 		?>
-		<div class="wrap">
-			<h1><?php esc_html_e( 'Quick Variants Settings', 'quick-variants' ); ?></h1>
-			<form method="post" action="options.php">
-				<?php settings_fields( 'quick_variants_settings_group' ); ?>
-				<?php do_settings_sections( 'quick-variants-settings' ); ?>
-				<?php submit_button(); ?>
-			</form>
-			<hr>
-			<h2><?php esc_html_e( 'Shortcode', 'quick-variants' ); ?></h2>
-			<p><code>[quick_variants]</code></p>
-			<p><?php esc_html_e( 'Override defaults:', 'quick-variants' ); ?> <code>[quick_variants per_page="15" category="hoodies"]</code></p>
+		<div class="wrap qv-admin">
+			<div class="qv-card">
+				<h1 class="text-2xl font-bold mb-2 flex items-center gap-2">
+					<span class="qv-bg-gradient bg-clip-text text-transparent"><?php esc_html_e( 'Quick Variants', 'quick-variants' ); ?></span>
+					<span class="text-xs font-medium px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 align-middle">v<?php echo esc_html( QUICK_VARIANTS_VERSION ); ?></span>
+				</h1>
+				<p class="text-sm text-gray-600 mb-6"><?php esc_html_e( 'Customize how the product variants table displays on the front-end.', 'quick-variants' ); ?></p>
+				<form method="post" action="options.php" class="space-y-8">
+					<?php settings_fields( 'quick_variants_settings_group' ); ?>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+						<div>
+							<h2 class="qv-section-title mb-4"><?php esc_html_e( 'Display Options', 'quick-variants' ); ?></h2>
+							<div class="qv-field">
+								<label for="default_per_page" class="qv-label"><?php esc_html_e( 'Default Products Per Page', 'quick-variants' ); ?></label>
+								<?php
+								$this->field_number(
+									array(
+										'key'   => 'default_per_page',
+										'attrs' => array(
+											'min' => 1,
+											'max' => 100,
+										),
+										'help'  => __( 'Number of rows to load initially.', 'quick-variants' ),
+									)
+								);
+								?>
+							</div>
+							<div class="qv-field">
+								<label for="enable_alphabet_filter" class="qv-label"><?php esc_html_e( 'Alphabet Filter', 'quick-variants' ); ?></label>
+								<?php
+								$this->field_checkbox(
+									array(
+										'key'  => 'enable_alphabet_filter',
+										'help' => __( 'Toggle A-Z filter bar.', 'quick-variants' ),
+									)
+								);
+								?>
+							</div>
+							<div class="qv-field">
+								<label for="show_slide_cart" class="qv-label"><?php esc_html_e( 'Slide Cart', 'quick-variants' ); ?></label>
+								<?php
+								$this->field_checkbox(
+									array(
+										'key'  => 'show_slide_cart',
+										'help' => __( 'Enable the slide-out cart drawer.', 'quick-variants' ),
+									)
+								);
+								?>
+							</div>
+						</div>
+						<div>
+							<h2 class="qv-section-title mb-4"><?php esc_html_e( 'Branding', 'quick-variants' ); ?></h2>
+							<div class="qv-field">
+								<label for="button_color" class="qv-label"><?php esc_html_e( 'Primary Button Color', 'quick-variants' ); ?></label>
+								<div class="qv-color-wrapper">
+									<?php
+									$this->field_text(
+										array(
+											'key'         => 'button_color',
+											'placeholder' => '#006DB5',
+											'help'        => __( 'Used for buttons & progress bar.', 'quick-variants' ),
+										)
+									);
+									?>
+								</div>
+							</div>
+							<div class="mt-8 pt-6 border-t border-gray-200">
+								<h2 class="qv-section-title mb-2"><?php esc_html_e( 'Shortcode', 'quick-variants' ); ?></h2>
+								<p class="text-sm font-mono bg-gray-50 border border-gray-200 rounded px-3 py-2 inline-block">[quick_variants]</p>
+								<p class="text-xs text-gray-500 mt-2"><?php esc_html_e( 'Override defaults:', 'quick-variants' ); ?> <code>[quick_variants per_page="15" category="hoodies"]</code></p>
+							</div>
+						</div>
+					</div>
+					<div class="qv-submit-wrapper">
+						<?php submit_button( __( 'Save Settings', 'quick-variants' ), 'primary large', 'submit', false, array( 'class' => 'qv-save-button button button-primary' ) ); ?>
+					</div>
+				</form>
+			</div>
 		</div>
 		<?php
 	}

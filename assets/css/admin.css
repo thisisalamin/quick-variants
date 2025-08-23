@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Admin panel specific components */
+@layer components {
+  .qv-card { @apply bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6; }
+  .qv-card h2 { @apply text-lg font-semibold mb-4; }
+  .qv-field { @apply mb-5; }
+  .qv-label { @apply block font-medium mb-1 text-sm text-gray-700; }
+  .qv-input { @apply w-40 rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 text-sm; }
+  .qv-checkbox { @apply h-4 w-4 text-indigo-600 border-gray-300 rounded; }
+  .qv-help { @apply text-xs text-gray-500 mt-1; }
+  .qv-section-title { @apply text-base font-semibold text-gray-800 mt-8 mb-2; }
+  .qv-submit-wrapper { @apply mt-8; }
+  .qv-color-wrapper { @apply flex items-center gap-3; }
+  .qv-color-preview { @apply h-8 w-8 rounded border border-gray-300 shadow-inner; }
+}
+
+/* Utilities override for WP admin dark modes (optional) */
+@layer utilities {
+  .qv-bg-gradient { @apply bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400; }
+}
