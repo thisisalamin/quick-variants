@@ -220,7 +220,6 @@ class Quick_Variants_Settings {
 									)
 								);
 								?>
-								<span class="inline-block w-10 h-10 rounded-full" style="background:<?php echo esc_attr( $settings['button_color'] ); ?>"></span>
 							</div>
 						</div>
 						<div>
@@ -291,8 +290,8 @@ class Quick_Variants_Settings {
 				<div class="bg-white shadow rounded-lg p-6">
 					<h2 class="text-lg font-medium text-gray-800 mb-4"><?php esc_html_e( 'Resources', 'quick-variants' ); ?></h2>
 					<ul class="space-y-2">
-						<li><a href="https://example.com/docs" target="_blank" class="text-blue-600 hover:underline"><?php esc_html_e( 'Documentation', 'quick-variants' ); ?></a></li>
-						<li><a href="mailto:support@example.com" class="text-blue-600 hover:underline"><?php esc_html_e( 'Support', 'quick-variants' ); ?></a></li>
+						<li><a href="https://github.com/thisisalamin/quick-variants" target="_blank" class="text-blue-600 hover:underline"><?php esc_html_e( 'Documentation', 'quick-variants' ); ?></a></li>
+						<li><a href="mailto:support@crafely.com" class="text-blue-600 hover:underline"><?php esc_html_e( 'Support', 'quick-variants' ); ?></a></li>
 					</ul>
 					<p class="text-xs text-gray-500 mt-3"><?php esc_html_e( 'Need custom tweaks? Reach out via support.', 'quick-variants' ); ?></p>
 				</div>
