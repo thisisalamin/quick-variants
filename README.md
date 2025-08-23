@@ -1,5 +1,4 @@
-# Quick Variants - WooCommerce Variant Product Table
-
+# Quick Variants
 A WordPress plugin that displays WooCommerce products in a table format with expandable variants, designed for quick and easy product browsing and variant selection.
 
 ## Features

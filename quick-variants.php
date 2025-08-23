@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Quick Variants - WooCommerce Variant Product Table
+ * Plugin Name: Quick Variants 
  * Description: Display WooCommerce products in a table format with expandable variants.
  * Version: 1.0
- * Author: Mohamed Alamin
+ * Author: Crafely
  * Author URI: https://www.crafely.com
  * License: GPL2
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
