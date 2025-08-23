@@ -44,7 +44,8 @@ function quick_variants_enqueue_assets() {
 	if ( $color ) {
 		$dynamic_css = ':root{--qv-btn-color:' . esc_attr( $color ) . ';}'
 			. ' .add-to-cart,.toggle-variants,.show-more-button,.alphabet-filter.active,.qv-cart-btn.primary{background-color:var(--qv-btn-color)!important;border-color:var(--qv-btn-color)!important;}'
-			. ' .add-to-cart:hover,.toggle-variants:hover,.show-more-button:hover,.qv-cart-btn.primary:hover{color:var(--qv-btn-color)!important;}'
+			. ' .add-to-cart:hover,.toggle-variants:hover,.show-more-button:hover{color:var(--qv-btn-color)!important;background:#fff!important;}'
+			. ' .qv-cart-btn.primary:hover{background:var(--qv-btn-color)!important;color:#fff!important;filter:brightness(1.05);}'
 			. ' .pagination-total-item{background-color:var(--qv-btn-color)!important;}';
 		wp_add_inline_style( 'quick-variants-custom', $dynamic_css );
 	}

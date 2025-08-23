@@ -1484,8 +1484,9 @@
     border-color: var(--qv-btn-color, #006DB5);
 }
 .qv-cart-btn.primary:hover {
-    background: #ffffff;
-    color: var(--qv-btn-color, #006DB5);
+    background: var(--qv-btn-color, #006DB5);
+    color: #ffffff;
+    filter: brightness(1.05);
 }
 .qv-cart-btn.secondary {
     background: #ffffff;
@@ -1500,7 +1501,7 @@
 /* Respect dynamic color variable if set */
 /* Variable-aware state overrides (redundant but explicit) */
 :root[style*='--qv-btn-color'] .qv-cart-btn.primary { background: var(--qv-btn-color) !important; border-color: var(--qv-btn-color) !important; }
-:root[style*='--qv-btn-color'] .qv-cart-btn.primary:hover { background: #ffffff !important; color: var(--qv-btn-color) !important; }
+:root[style*='--qv-btn-color'] .qv-cart-btn.primary:hover { background: var(--qv-btn-color) !important; color: #ffffff !important; filter: brightness(1.05); }
 
 
 /* Progress bar color */
