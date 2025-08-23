@@ -1,17 +1,19 @@
-# WooCommerce Variant Product Table
+# Quick Variants - WooCommerce Variant Product Table
 
-A WordPress plugin that displays WooCommerce products in a table format with expandable variants.
+A WordPress plugin that displays WooCommerce products in a table format with expandable variants, designed for quick and easy product browsing and variant selection.
 
 ## Features
 
+- Quick variant browsing and selection
 - Responsive product table display
-- Show/hide product variants
+- Show/hide product variants instantly
 - Quick add to cart functionality
-- Sliding cart panel
+- Sliding cart panel with real-time updates
 - Real-time cart updates
-- Supports variable products
-- Category filtering
-- Mobile-friendly design
+- Supports variable products with attributes
+- Category filtering and search
+- Alphabet filtering (A-Z)
+- Mobile-friendly responsive design
 
 ## Installation
 
@@ -24,10 +26,10 @@ A WordPress plugin that displays WooCommerce products in a table format with exp
 
 ### Basic Shortcode
 
-Add the product table to any page or post using the shortcode:
+Add the Quick Variants product table to any page or post using the shortcode:
 
 ```
-[wc_product_table]
+[quick_variants]
 ```
 
 ### Filter by Category
@@ -35,13 +37,21 @@ Add the product table to any page or post using the shortcode:
 Display products from specific categories:
 
 ```
-[wc_product_table category="category-slug"]
+[quick_variants category="category-slug"]
 ```
 
 Multiple categories can be separated by commas:
 
 ```
-[wc_product_table category="category-1,category-2"]
+[quick_variants category="category-1,category-2"]
+```
+
+### Pagination Control
+
+Control how many products are shown per page:
+
+```
+[quick_variants per_page="15"]
 ```
 
 ## Requirements
@@ -52,11 +62,11 @@ Multiple categories can be separated by commas:
 
 ## Styling
 
-The plugin uses Tailwind CSS for styling. Custom styles can be added through your theme's CSS file or the WordPress customizer.
+The plugin uses Tailwind CSS for styling with a modern, clean design. Custom styles can be added through your theme's CSS file or the WordPress customizer to match your site's branding.
 
 ## Support
 
-For support questions or bug reports, please open an issue on the plugin's GitHub repository.
+For support questions or bug reports, please contact Mohamed Alamin at https://www.crafely.com or open an issue on the plugin's repository.
 
 ## License
 

@@ -1,16 +1,17 @@
 {
-  "name": "woovariant-table",
+  "name": "quick-variants",
   "version": "1.0.0",
+  "description": "Quick Variants - WooCommerce Variant Product Table Plugin",
   "main": "tailwind.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tailwindcss -i ./assets/css/style.css -o ./assets/css/dist/style.css",
     "watch": "tailwindcss -i ./assets/css/style.css -o ./assets/css/dist/style.css --watch"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": ["wordpress", "woocommerce", "product-table", "variants", "quick-variants"],
+  "author": "Mohamed Alamin",
+  "license": "GPL2",
+  "description": "Quick Variants - WooCommerce Variant Product Table Plugin",
   "devDependencies": {
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.3",
