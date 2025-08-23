@@ -77,31 +77,31 @@ class Quick_Variants_Settings {
 		return $out;
 	}
 
-public function render_page() {
-	if ( ! current_user_can( 'manage_options' ) ) {
-		return;
-	}
+	public function render_page() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
 
-	$settings         = self::get_settings();
-	$default_per_page = (int) $settings['default_per_page'];
-	$product_cats     = get_terms(
-		array(
-			'taxonomy'   => 'product_cat',
-			'hide_empty' => false,
-		)
-	);
-
-	$reset_url = wp_nonce_url(
-		add_query_arg(
+		$settings         = self::get_settings();
+		$default_per_page = (int) $settings['default_per_page'];
+		$product_cats     = get_terms(
 			array(
-				'page'     => 'quick-variants-settings',
-				'qv_reset' => 1,
+				'taxonomy'   => 'product_cat',
+				'hide_empty' => false,
 			)
-		),
-		'qv_reset_defaults',
-		'_qvnonce'
-	);
-	?>
+		);
+
+		$reset_url = wp_nonce_url(
+			add_query_arg(
+				array(
+					'page'     => 'quick-variants-settings',
+					'qv_reset' => 1,
+				)
+			),
+			'qv_reset_defaults',
+			'_qvnonce'
+		);
+		?>
 
 	<div class="wrap qv-admin">
 		<!-- Header -->
@@ -119,8 +119,8 @@ public function render_page() {
 			</div>
 			<div>
 				<a href="<?php echo esc_url( $reset_url ); ?>"
-				   onclick="return confirm('<?php echo esc_js( __( 'Reset all settings to defaults? This cannot be undone.', 'quick-variants' ) ); ?>');"
-				   class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100">
+					onclick="return confirm('<?php echo esc_js( __( 'Reset all settings to defaults? This cannot be undone.', 'quick-variants' ) ); ?>');"
+					class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100">
 					&#8635; <?php esc_html_e( 'Reset', 'quick-variants' ); ?>
 				</a>
 			</div>
@@ -139,11 +139,18 @@ public function render_page() {
 							<label for="default_per_page" class="block font-medium text-gray-700">
 								<?php esc_html_e( 'Default Products Per Page', 'quick-variants' ); ?>
 							</label>
-							<?php $this->field_number([
-								'key'   => 'default_per_page',
-								'attrs' => ['min' => 1, 'max' => 100],
-								'help'  => __( 'Rows initially shown (higher may slow first load).', 'quick-variants' ),
-							]); ?>
+							<?php
+							$this->field_number(
+								array(
+									'key'   => 'default_per_page',
+									'attrs' => array(
+										'min' => 1,
+										'max' => 100,
+									),
+									'help'  => __( 'Rows initially shown (higher may slow first load).', 'quick-variants' ),
+								)
+							);
+							?>
 						</div>
 					</div>
 				</div>
@@ -156,29 +163,41 @@ public function render_page() {
 							<label class="block font-medium text-gray-700">
 								<?php esc_html_e( 'Alphabet Filter', 'quick-variants' ); ?>
 							</label>
-							<?php $this->field_checkbox([
-								'key'  => 'enable_alphabet_filter',
-								'help' => __( 'Show A–Z filter bar.', 'quick-variants' ),
-							]); ?>
+								<?php
+								$this->field_checkbox(
+									array(
+										'key'  => 'enable_alphabet_filter',
+										'help' => __( 'Show A–Z filter bar.', 'quick-variants' ),
+									)
+								);
+								?>
 						</div>
 						<div>
 							<label class="block font-medium text-gray-700">
 								<?php esc_html_e( 'Slide Cart Drawer', 'quick-variants' ); ?>
 							</label>
-							<?php $this->field_checkbox([
-								'key'  => 'show_slide_cart',
-								'help' => __( 'Open slide cart after add to cart.', 'quick-variants' ),
-							]); ?>
+								<?php
+								$this->field_checkbox(
+									array(
+										'key'  => 'show_slide_cart',
+										'help' => __( 'Open slide cart after add to cart.', 'quick-variants' ),
+									)
+								);
+								?>
 						</div>
 						<div>
 							<label class="block font-medium text-gray-700">
 								<?php esc_html_e( 'Table Max Width', 'quick-variants' ); ?>
 							</label>
-							<?php $this->field_text([
-								'key'         => 'table_max_width',
-								'placeholder' => '1200px',
-								'help'        => __( '1200px, 90%, 70rem or blank for full width.', 'quick-variants' ),
-							]); ?>
+								<?php
+								$this->field_text(
+									array(
+										'key'         => 'table_max_width',
+										'placeholder' => '1200px',
+										'help'        => __( '1200px, 90%, 70rem or blank for full width.', 'quick-variants' ),
+									)
+								);
+								?>
 						</div>
 					</div>
 				</div>
@@ -192,19 +211,23 @@ public function render_page() {
 								<?php esc_html_e( 'Primary Button Color', 'quick-variants' ); ?>
 							</label>
 							<div class="flex items-center gap-3">
-								<?php $this->field_text([
-									'key'         => 'button_color',
-									'placeholder' => '#006DB5',
-									'help'        => __( 'Used for primary buttons & progress bar.', 'quick-variants' ),
-								]); ?>
-								<span class="inline-block w-10 h-10 rounded border" style="background:<?php echo esc_attr( $settings['button_color'] ); ?>"></span>
+								<?php
+								$this->field_text(
+									array(
+										'key'         => 'button_color',
+										'placeholder' => '#006DB5',
+										'help'        => __( 'Used for primary buttons & progress bar.', 'quick-variants' ),
+									)
+								);
+								?>
+								<span class="inline-block w-10 h-10 rounded-full" style="background:<?php echo esc_attr( $settings['button_color'] ); ?>"></span>
 							</div>
 						</div>
 						<div>
 							<button type="button" id="qv-preview-button"
 								class="px-4 py-2 rounded text-white font-medium"
 								style="background:<?php echo esc_attr( $settings['button_color'] ); ?>;border-color:<?php echo esc_attr( $settings['button_color'] ); ?>">
-								<?php esc_html_e( 'Sample Button', 'quick-variants' ); ?>
+									<?php esc_html_e( 'Sample Button', 'quick-variants' ); ?>
 							</button>
 						</div>
 					</div>
@@ -221,7 +244,7 @@ public function render_page() {
 					<div class="space-y-4">
 						<div>
 							<label for="qv-gen-per-page" class="block font-medium text-gray-700">
-								<?php esc_html_e( 'Products Per Page (override)', 'quick-variants' ); ?>
+									<?php esc_html_e( 'Products Per Page (override)', 'quick-variants' ); ?>
 							</label>
 							<input type="number" min="1" max="100" id="qv-gen-per-page" class="w-24 border rounded px-2 py-1" placeholder="<?php echo esc_attr( $default_per_page ); ?>" />
 							<p class="text-xs text-gray-500"><?php printf( esc_html__( 'Blank = default (%d).', 'quick-variants' ), $default_per_page ); ?></p>
@@ -229,11 +252,11 @@ public function render_page() {
 
 						<div>
 							<label for="qv-cat-search" class="block font-medium text-gray-700">
-								<?php esc_html_e( 'Limit to Categories', 'quick-variants' ); ?>
+									<?php esc_html_e( 'Limit to Categories', 'quick-variants' ); ?>
 							</label>
 							<input type="text" id="qv-cat-search" placeholder="<?php esc_attr_e( 'Search categories…', 'quick-variants' ); ?>" class="w-full border rounded px-2 py-1 mb-2" />
 
-							<?php if ( ! empty( $product_cats ) && ! is_wp_error( $product_cats ) ) : ?>
+								<?php if ( ! empty( $product_cats ) && ! is_wp_error( $product_cats ) ) : ?>
 								<div class="flex gap-2 mb-2">
 									<button type="button" class="px-2 py-1 text-xs bg-gray-100 border rounded hover:bg-gray-200" id="qv-cat-select-all">&check; <?php esc_html_e( 'All', 'quick-variants' ); ?></button>
 									<button type="button" class="px-2 py-1 text-xs bg-gray-100 border rounded hover:bg-gray-200" id="qv-cat-clear">&times; <?php esc_html_e( 'Clear', 'quick-variants' ); ?></button>
@@ -270,21 +293,31 @@ public function render_page() {
 					<ul class="space-y-2">
 						<li><a href="https://example.com/docs" target="_blank" class="text-blue-600 hover:underline"><?php esc_html_e( 'Documentation', 'quick-variants' ); ?></a></li>
 						<li><a href="mailto:support@example.com" class="text-blue-600 hover:underline"><?php esc_html_e( 'Support', 'quick-variants' ); ?></a></li>
-						<li><a href="https://example.com/changelog" target="_blank" class="text-blue-600 hover:underline"><?php esc_html_e( 'Changelog', 'quick-variants' ); ?></a></li>
 					</ul>
 					<p class="text-xs text-gray-500 mt-3"><?php esc_html_e( 'Need custom tweaks? Reach out via support.', 'quick-variants' ); ?></p>
 				</div>
 			</div>
 
 			<!-- Sticky Save -->
-			<div class="lg:col-span-3 flex justify-end mt-6">
-				<?php submit_button( __( 'Save Settings', 'quick-variants' ), 'primary large', 'submit', false, [ 'class' => 'px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow' ] ); ?>
+			<div class="lg:col-span-3 flex justify-end qv-sticky-save">
+					<?php
+					// Use unified primary button style.
+					submit_button(
+						__( 'Save Settings', 'quick-variants' ),
+						'primary large',
+						'submit',
+						false,
+						array(
+							'class' => 'qv-primary-btn',
+						)
+					);
+					?>
 			</div>
 		</form>
 	</div>
 
-	<?php
-}
+		<?php
+	}
 
 
 	/* Field helpers */
