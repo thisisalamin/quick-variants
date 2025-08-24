@@ -35,11 +35,11 @@
 					data-per-page="<?php echo esc_attr( $atts['per_page'] ); ?>">
 				<thead>
 				<tr class="!border-b !border-gray-200 bg-[#FAFAFA]">
-					<th style="width:120px !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php esc_html_e( 'Images', 'quick-variants' ); ?></th>
-					<th style="width:50% !important" class="p-4 align-middle text-left font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200 w-[400px]"><?php esc_html_e( 'Product', 'quick-variants' ); ?></th>
-					<th style="width:30% !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php esc_html_e( 'Price', 'quick-variants' ); ?></th>
-					<th style="width:120px !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php esc_html_e( 'Qty', 'quick-variants' ); ?></th>
-					<th style="width:250px !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php esc_html_e( 'Options', 'quick-variants' ); ?></th>
+					<th style="width:120px !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php echo esc_html( quick_variants_get_setting( 'label_images' ) ); ?></th>
+					<th style="width:50% !important" class="p-4 align-middle text-left font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200 w-[400px]"><?php echo esc_html( quick_variants_get_setting( 'label_product' ) ); ?></th>
+					<th style="width:30% !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php echo esc_html( quick_variants_get_setting( 'label_price' ) ); ?></th>
+					<th style="width:120px !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php echo esc_html( quick_variants_get_setting( 'label_qty' ) ); ?></th>
+					<th style="width:250px !important" class="p-4 align-middle text-center font-semibold text-xs tracking-wide text-gray-600 !border !border-gray-200"><?php echo esc_html( quick_variants_get_setting( 'label_options' ) ); ?></th>
 				</tr>
 				</thead>
 				<tbody>

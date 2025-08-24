@@ -50,6 +50,13 @@ class Quick_Variants_Settings {
 	public static function get_defaults() {
 		return array(
 			'default_per_page'       => 10,
+			// Labels
+			'label_images'           => __( 'Images', 'quick-variants' ),
+			'label_product'          => __( 'Product', 'quick-variants' ),
+			'label_price'            => __( 'Price', 'quick-variants' ),
+			'label_qty'              => __( 'Qty', 'quick-variants' ),
+			'label_options'          => __( 'Options', 'quick-variants' ),
+			'label_add_to_cart'      => __( 'Add to cart', 'quick-variants' ),
 			'enable_quick_view'      => 1,
 			'enable_alphabet_filter' => 1,
 			'show_slide_cart'        => 1,
@@ -74,8 +81,16 @@ class Quick_Variants_Settings {
 		$out['enable_alphabet_filter'] = empty( $input['enable_alphabet_filter'] ) ? 0 : 1;
 		$out['enable_quick_view']      = empty( $input['enable_quick_view'] ) ? 0 : 1;
 		$out['show_slide_cart']        = empty( $input['show_slide_cart'] ) ? 0 : 1;
-		$out['button_color']           = sanitize_text_field( $input['button_color'] ?? '' );
-		$out['table_max_width']        = sanitize_text_field( $input['table_max_width'] ?? '' );
+		// Labels
+		$defaults                 = self::get_defaults();
+		$out['label_images']      = sanitize_text_field( $input['label_images'] ?? $defaults['label_images'] );
+		$out['label_product']     = sanitize_text_field( $input['label_product'] ?? $defaults['label_product'] );
+		$out['label_price']       = sanitize_text_field( $input['label_price'] ?? $defaults['label_price'] );
+		$out['label_qty']         = sanitize_text_field( $input['label_qty'] ?? $defaults['label_qty'] );
+		$out['label_options']     = sanitize_text_field( $input['label_options'] ?? $defaults['label_options'] );
+		$out['label_add_to_cart'] = sanitize_text_field( $input['label_add_to_cart'] ?? $defaults['label_add_to_cart'] );
+		$out['button_color']      = sanitize_text_field( $input['button_color'] ?? '' );
+		$out['table_max_width']   = sanitize_text_field( $input['table_max_width'] ?? '' );
 		return $out;
 	}
 
@@ -133,29 +148,6 @@ class Quick_Variants_Settings {
 
 			<!-- Main settings -->
 			<div class="lg:col-span-2 space-y-6">
-				<!-- General -->
-				<div class="bg-white shadow rounded-lg p-6">
-					<h2 class="text-lg font-medium text-gray-800 mb-4"><?php esc_html_e( 'General', 'quick-variants' ); ?></h2>
-					<div class="space-y-4">
-						<div>
-							<label for="default_per_page" class="block font-medium text-gray-700">
-								<?php esc_html_e( 'Default Products Per Page', 'quick-variants' ); ?>
-							</label>
-							<?php
-							$this->field_number(
-								array(
-									'key'   => 'default_per_page',
-									'attrs' => array(
-										'min' => 1,
-										'max' => 100,
-									),
-									'help'  => __( 'Rows initially shown (higher may slow first load).', 'quick-variants' ),
-								)
-							);
-							?>
-						</div>
-					</div>
-				</div>
 
 				<!-- Display -->
 				<div class="bg-white shadow rounded-lg p-6">
@@ -173,6 +165,23 @@ class Quick_Variants_Settings {
 									)
 								);
 								?>
+						</div>
+						<div>
+							<label for="default_per_page" class="block font-medium text-gray-700">
+								<?php esc_html_e( 'Default Products Per Page', 'quick-variants' ); ?>
+							</label>
+							<?php
+							$this->field_number(
+								array(
+									'key'   => 'default_per_page',
+									'attrs' => array(
+										'min' => 1,
+										'max' => 100,
+									),
+									'help'  => __( 'Rows initially shown (higher may slow first load).', 'quick-variants' ),
+								)
+							);
+							?>
 						</div>
 						<div>
 							<label class="block font-medium text-gray-700">
@@ -213,6 +222,47 @@ class Quick_Variants_Settings {
 									)
 								);
 								?>
+						</div>
+						<div class="mt-4">
+							<h3 class="text-sm font-medium text-gray-800 mb-2"><?php esc_html_e( 'Table Labels', 'quick-variants' ); ?></h3>
+							<?php
+							$this->field_text(
+								array(
+									'key'  => 'label_images',
+									'help' => __( 'Header for the images column.', 'quick-variants' ),
+								)
+							);
+							$this->field_text(
+								array(
+									'key'  => 'label_product',
+									'help' => __( 'Header for the product name column.', 'quick-variants' ),
+								)
+							);
+							$this->field_text(
+								array(
+									'key'  => 'label_price',
+									'help' => __( 'Header for the price column.', 'quick-variants' ),
+								)
+							);
+							$this->field_text(
+								array(
+									'key'  => 'label_qty',
+									'help' => __( 'Header for the quantity column.', 'quick-variants' ),
+								)
+							);
+							$this->field_text(
+								array(
+									'key'  => 'label_options',
+									'help' => __( 'Header for options/actions column.', 'quick-variants' ),
+								)
+							);
+							$this->field_text(
+								array(
+									'key'  => 'label_add_to_cart',
+									'help' => __( 'Label for Add to cart button.', 'quick-variants' ),
+								)
+							);
+							?>
 						</div>
 					</div>
 				</div>

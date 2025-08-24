@@ -54,7 +54,7 @@ $visible_variants = get_query_var( 'visible_variants', array() );
 			<?php else : ?>
 				<button class="add-to-cart relative inline-flex items-center justify-center gap-2 bg-[#232323] text-white px-4 py-2.5 text-[13px] font-semibold rounded-md hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-black/40"
 						data-id="<?php echo $product->get_id(); ?>">
-					<?php esc_html_e( 'Add to cart', 'quick-variants' ); ?>
+					<?php echo esc_html( quick_variants_get_setting( 'label_add_to_cart' ) ); ?>
 				</button>
 			<?php endif; ?>
 
@@ -124,7 +124,7 @@ $visible_variants = get_query_var( 'visible_variants', array() );
 				<div class="flex items-center gap-2">
 					<button class="add-to-cart relative inline-flex items-center justify-center gap-2 bg-[#232323] text-white px-4 py-2.5 text-[13px] font-semibold rounded-md hover:bg-white hover:text-black hover:border-black hover:border transition-all duration-300 w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-black/40"
 							data-id="<?php echo $variation['variation_id']; ?>">
-						<?php esc_html_e( 'Add to cart', 'quick-variants' ); ?>
+						<?php echo esc_html( quick_variants_get_setting( 'label_add_to_cart' ) ); ?>
 					</button>
 					<?php if ( function_exists( 'quick_variants_get_setting' ) && quick_variants_get_setting( 'enable_quick_view' ) ) : ?>
 					<button class="qv-quick-view-btn inline-flex items-center justify-center p-2 rounded-md border hover:bg-gray-50" title="<?php esc_attr_e( 'Quick view', 'quick-variants' ); ?>" data-id="<?php echo $variation['variation_id']; ?>">

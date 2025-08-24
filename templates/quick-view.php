@@ -75,7 +75,7 @@ $variations_json = wp_json_encode( $variations_for_js );
 			<?php endif; ?>
 
 			<div class="flex items-center gap-3 mt-4">
-				<button class="qv-add-to-cart qv-cart-btn primary inline-flex items-center gap-2 px-4 py-2 rounded-md" data-id="<?php echo esc_attr( $product->get_id() ); ?>"><?php esc_html_e( 'Add to cart', 'quick-variants' ); ?></button>
+				<button class="qv-add-to-cart qv-cart-btn primary inline-flex items-center gap-2 px-4 py-2 rounded-md" data-id="<?php echo esc_attr( $product->get_id() ); ?>"><?php echo esc_html( quick_variants_get_setting( 'label_add_to_cart' ) ); ?></button>
 				<button class="qv-close qv-cart-btn secondary inline-flex items-center gap-2 px-4 py-2 rounded-md"><?php esc_html_e( 'Close', 'quick-variants' ); ?></button>
 			</div>
 		</div>
