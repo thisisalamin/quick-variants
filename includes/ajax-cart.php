@@ -9,10 +9,23 @@ function quick_variants_ajax_add_to_cart() {
 	check_ajax_referer( 'wc_cart_nonce', 'nonce' );
 	$product_id = isset( $_POST['product_id'] ) ? intval( $_POST['product_id'] ) : 0;
 	$quantity   = isset( $_POST['quantity'] ) ? intval( $_POST['quantity'] ) : 1;
+	// Optional variation data
+	$variation_id = isset( $_POST['variation_id'] ) ? intval( $_POST['variation_id'] ) : 0;
+	$variation    = array();
+	if ( isset( $_POST['variation'] ) && is_array( $_POST['variation'] ) ) {
+		foreach ( $_POST['variation'] as $k => $v ) {
+			$variation[ sanitize_text_field( $k ) ] = sanitize_text_field( $v );
+		}
+	}
 	if ( $product_id > 0 ) {
 		// Clear any lingering notices to capture only current attempt.
 		wc_clear_notices();
-		$added = WC()->cart->add_to_cart( $product_id, $quantity );
+		// If we have a variation_id, pass variation data to add_to_cart
+		if ( $variation_id > 0 ) {
+			$added = WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $variation );
+		} else {
+			$added = WC()->cart->add_to_cart( $product_id, $quantity );
+		}
 		if ( $added ) {
 			wp_send_json_success( quick_variants_get_cart_payload() );
 		}

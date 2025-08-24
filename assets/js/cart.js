@@ -85,6 +85,9 @@ jQuery(document).ready(function($) {
         });
     }
 
+    // Expose for other modules (e.g., quick view) to call
+    window.updateCartDisplay = updateCartDisplay;
+
     // Open Cart
     function openCart() {
         $('#slide-cart').addClass('active');
