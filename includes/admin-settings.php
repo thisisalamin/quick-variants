@@ -50,6 +50,7 @@ class Quick_Variants_Settings {
 	public static function get_defaults() {
 		return array(
 			'default_per_page'       => 10,
+			'enable_quick_view'      => 1,
 			'enable_alphabet_filter' => 1,
 			'show_slide_cart'        => 1,
 			'button_color'           => '#006DB5',
@@ -71,6 +72,7 @@ class Quick_Variants_Settings {
 		$out                           = array();
 		$out['default_per_page']       = max( 1, min( 100, intval( $input['default_per_page'] ?? self::get_defaults()['default_per_page'] ) ) );
 		$out['enable_alphabet_filter'] = empty( $input['enable_alphabet_filter'] ) ? 0 : 1;
+		$out['enable_quick_view']      = empty( $input['enable_quick_view'] ) ? 0 : 1;
 		$out['show_slide_cart']        = empty( $input['show_slide_cart'] ) ? 0 : 1;
 		$out['button_color']           = sanitize_text_field( $input['button_color'] ?? '' );
 		$out['table_max_width']        = sanitize_text_field( $input['table_max_width'] ?? '' );
@@ -181,6 +183,19 @@ class Quick_Variants_Settings {
 									array(
 										'key'  => 'show_slide_cart',
 										'help' => __( 'Open slide cart after add to cart.', 'quick-variants' ),
+									)
+								);
+								?>
+						</div>
+						<div>
+							<label class="block font-medium text-gray-700">
+								<?php esc_html_e( 'Quick View', 'quick-variants' ); ?>
+							</label>
+								<?php
+								$this->field_checkbox(
+									array(
+										'key'  => 'enable_quick_view',
+										'help' => __( 'Enable the Quick View eye icon on products.', 'quick-variants' ),
 									)
 								);
 								?>

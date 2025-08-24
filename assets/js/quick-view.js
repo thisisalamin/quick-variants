@@ -11,12 +11,18 @@ jQuery(document).ready(function($) {
         var root = $('#qv-modal-root');
         var content = $('#qv-modal-content');
 
-    // show loader and open modal with fade-in
+    // show loader and open modal with smooth fade/scale
     content.html('<div class="p-6 bg-white rounded">Loading...</div>');
-    root.removeClass('hidden');
-    // trigger reflow then fade in
-    root.addClass('qv-visible');
-    setTimeout(function() { root.addClass('flex'); }, 10);
+    // make modal container participate in layout first
+    root.removeClass('hidden').addClass('flex');
+    // prevent background scrolling while modal is open
+    $('body').css('overflow', 'hidden');
+    // Next frame, add the visible class to trigger CSS transition
+    if (window.requestAnimationFrame) {
+        window.requestAnimationFrame(function() { root.addClass('qv-visible'); });
+    } else {
+        setTimeout(function() { root.addClass('qv-visible'); }, 16);
+    }
 
         // Resolve ajaxUrl and nonce from localized objects (prefer wcQuickView)
         var ajaxUrl = (typeof wcQuickView !== 'undefined' && wcQuickView.ajaxUrl) ? wcQuickView.ajaxUrl :
@@ -106,10 +112,11 @@ jQuery(document).ready(function($) {
 
     // Close modal on overlay or close button
     $(document).on('click', '#qv-modal-overlay, .qv-close', function() {
-    // smooth close
+    // smooth close: remove visible first, then hide the container after transition
     var root = $('#qv-modal-root');
-    root.removeClass('flex qv-visible');
-    setTimeout(function() { root.addClass('hidden'); $('#qv-modal-content').empty(); }, 250);
+    root.removeClass('qv-visible');
+    // restore body scrolling after transition
+    setTimeout(function() { root.removeClass('flex'); root.addClass('hidden'); $('#qv-modal-content').empty(); $('body').css('overflow', ''); }, 260);
     });
 
     // Close when clicking outside the modal content (modal root itself)
@@ -117,8 +124,8 @@ jQuery(document).ready(function($) {
         // If the click target is the root (i.e., not the content), close
         if ( $(e.target).is('#qv-modal-root') || $(e.target).is('#qv-modal-overlay') ) {
             var root = $('#qv-modal-root');
-            root.removeClass('flex qv-visible');
-            setTimeout(function() { root.addClass('hidden'); $('#qv-modal-content').empty(); }, 250);
+            root.removeClass('qv-visible');
+            setTimeout(function() { root.removeClass('flex'); root.addClass('hidden'); $('#qv-modal-content').empty(); $('body').css('overflow', ''); }, 260);
         }
     });
 

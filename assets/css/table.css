@@ -1562,9 +1562,11 @@
 }
 
 #qv-modal-root .qv-quick-view {
-    transform: translateY(-8px) scale(.98);
+    transform: translateY(-10px) scale(.985);
+    transform-origin: center center;
     opacity: 0;
-    transition: transform 220ms cubic-bezier(.2,.8,.2,1), opacity 220ms ease;
+    will-change: transform, opacity;
+    transition: transform 300ms cubic-bezier(.22,.9,.2,1), opacity 260ms ease;
     max-height: 90vh;
     overflow: auto;
 }
@@ -1577,9 +1579,9 @@
 #qv-modal-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.45);
+    background: rgba(0,0,0,0.55);
     opacity: 0;
-    transition: opacity 220ms ease;
+    transition: opacity 300ms ease;
 }
 
 #qv-modal-root.qv-visible #qv-modal-overlay {

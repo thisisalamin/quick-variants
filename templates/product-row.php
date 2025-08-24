@@ -59,12 +59,14 @@ $visible_variants = get_query_var( 'visible_variants', array() );
 			<?php endif; ?>
 
 			<!-- Quick view button -->
+			<?php if ( function_exists( 'quick_variants_get_setting' ) && quick_variants_get_setting( 'enable_quick_view' ) ) : ?>
 			<button class="qv-quick-view-btn inline-flex items-center justify-center p-2 rounded-md border hover:bg-gray-50" title="<?php esc_attr_e( 'Quick view', 'quick-variants' ); ?>" data-id="<?php echo $product->get_id(); ?>">
 				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 					<path d="M10 3C5 3 1.73 6.11 1 10c.73 3.89 4 7 9 7s8.27-3.11 9-7c-.73-3.89-4-7-9-7zm0 12a5 5 0 110-10 5 5 0 010 10z" />
 					<path d="M10 7a3 3 0 100 6 3 3 0 000-6z" />
 				</svg>
 			</button>
+			<?php endif; ?>
 		</div>
 	</td>
 </tr>
@@ -124,12 +126,14 @@ $visible_variants = get_query_var( 'visible_variants', array() );
 							data-id="<?php echo $variation['variation_id']; ?>">
 						<?php esc_html_e( 'Add to cart', 'quick-variants' ); ?>
 					</button>
+					<?php if ( function_exists( 'quick_variants_get_setting' ) && quick_variants_get_setting( 'enable_quick_view' ) ) : ?>
 					<button class="qv-quick-view-btn inline-flex items-center justify-center p-2 rounded-md border hover:bg-gray-50" title="<?php esc_attr_e( 'Quick view', 'quick-variants' ); ?>" data-id="<?php echo $variation['variation_id']; ?>">
 						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 							<path d="M10 3C5 3 1.73 6.11 1 10c.73 3.89 4 7 9 7s8.27-3.11 9-7c-.73-3.89-4-7-9-7zm0 12a5 5 0 110-10 5 5 0 010 10z" />
 							<path d="M10 7a3 3 0 100 6 3 3 0 000-6z" />
 						</svg>
 					</button>
+					<?php endif; ?>
 				</div>
 			</td>
 		</tr>
