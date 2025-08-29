@@ -368,7 +368,12 @@ class Quick_Variants_Settings {
 												<?php esc_html_e( 'Products Per Page', 'quick-variants' ); ?>
 											</label>
 											<input type="number" min="1" max="100" id="qv-gen-per-page" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="<?php echo esc_attr( $default_per_page ); ?>" />
-											<p class="text-xs text-gray-500 mt-1"><?php printf( esc_html__( 'Blank = default (%d)', 'quick-variants' ), esc_html( $default_per_page ) ); ?></p>
+											<p class="text-xs text-gray-500 mt-1">
+												<?php
+												/* translators: %d: default number of products per page */
+												printf( esc_html__( 'Blank = default (%d)', 'quick-variants' ), esc_html( $default_per_page ) );
+												?>
+											</p>
 										</div>
 
 										<div>
