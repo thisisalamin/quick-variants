@@ -122,26 +122,26 @@ class Quick_Variants_Settings {
 
 	<div class="wrap qv-admin">
 		<!-- Enhanced Header -->
-		<div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-800 shadow-xl rounded-2xl p-8 mb-8 text-white">
+		<div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-8 mb-8 shadow-sm">
 			<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 				<div class="flex items-center gap-4">
-					<div class="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
-						<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-							<path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clip-rule="evenodd"/>
+					<div class="bg-blue-100 p-3 rounded-xl shadow-sm">
+						<svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
 						</svg>
 					</div>
 					<div>
-						<h1 class="text-3xl font-bold tracking-tight"><?php esc_html_e( 'Quick Variants', 'quick-variants' ); ?></h1>
-						<p class="text-indigo-100 text-sm mt-1"><?php esc_html_e( 'WooCommerce Product Table Settings', 'quick-variants' ); ?></p>
+						<h1 class="text-2xl font-bold tracking-tight text-gray-800"><?php esc_html_e( 'Quick Variants', 'quick-variants' ); ?></h1>
+						<p class="text-sm text-gray-600 mt-1"><?php esc_html_e( 'WooCommerce Product Table Settings', 'quick-variants' ); ?></p>
 					</div>
 				</div>
 				<div class="flex items-center gap-3">
-					<span class="bg-white/20 backdrop-blur-sm text-xs font-semibold px-3 py-1.5 rounded-full">
+					<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full">
 						v<?php echo esc_html( QUICK_VARIANTS_VERSION ); ?>
 					</span>
 					<a href="<?php echo esc_url( $reset_url ); ?>"
 						onclick="return confirm('<?php echo esc_js( __( 'Reset all settings to defaults? This cannot be undone.', 'quick-variants' ) ); ?>');"
-						class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-300 bg-red-500/20 border border-red-400/30 rounded-lg hover:bg-red-500/30 hover:text-red-200 transition-all duration-200 backdrop-blur-sm">
+						class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-all duration-200">
 						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
 						</svg>
@@ -151,7 +151,7 @@ class Quick_Variants_Settings {
 			</div>
 		</div>
 
-		<form method="post" action="options.php" class="space-y-8" id="qv-settings-form">
+		<form method="post" action="options.php" class="space-y-8 " id="qv-settings-form">
 			<?php settings_fields( 'quick_variants_settings_group' ); ?>
 
 			<!-- Tab Navigation -->
@@ -247,10 +247,10 @@ class Quick_Variants_Settings {
 								</div>
 
 								<!-- Branding & Colors -->
-								<div class="bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 border border-purple-200 rounded-xl p-6 shadow-sm">
+								<div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 shadow-sm">
 									<div class="flex items-center gap-3 mb-6">
-										<div class="bg-gradient-to-br from-purple-100 to-pink-100 p-2.5 rounded-lg shadow-sm">
-											<svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<div class="bg-blue-100 p-2.5 rounded-lg shadow-sm">
+											<svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"/>
 											</svg>
 										</div>
@@ -494,7 +494,7 @@ class Quick_Variants_Settings {
 
 			<!-- Enhanced Save Button -->
 			<div class="flex justify-center">
-				<button type="submit" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1">
+				<button type="submit" class="inline-flex items-center gap-3 px-8 py-4 bg-blue-600 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1">
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
 					</svg>
