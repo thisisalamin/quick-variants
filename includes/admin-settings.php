@@ -247,43 +247,102 @@ class Quick_Variants_Settings {
 								</div>
 
 								<!-- Branding & Colors -->
-								<div class="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200 rounded-xl p-6">
+								<div class="bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 border border-purple-200 rounded-xl p-6 shadow-sm">
 									<div class="flex items-center gap-3 mb-6">
-										<div class="bg-indigo-100 p-2 rounded-lg">
-											<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<div class="bg-gradient-to-br from-purple-100 to-pink-100 p-2.5 rounded-lg shadow-sm">
+											<svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"/>
 											</svg>
 										</div>
-										<h2 class="text-xl font-bold text-gray-800"><?php esc_html_e( 'Branding & Colors', 'quick-variants' ); ?></h2>
-									</div>
-									<div class="space-y-6">
 										<div>
-											<label class="block font-semibold text-gray-800 mb-3"><?php esc_html_e( 'Primary Button Color', 'quick-variants' ); ?></label>
-											<div class="flex items-center gap-4">
-												<?php
-												$this->field_text_enhanced(
-													array(
-														'key'         => 'button_color',
-														'placeholder' => '#006DB5',
-														'help'        => __( 'Used for primary buttons & progress bar', 'quick-variants' ),
-													)
-												);
-												?>
-												<div id="qv-color-preview" class="w-12 h-12 rounded-lg border-4 border-white shadow-lg" style="background:<?php echo esc_attr( $settings['button_color'] ); ?>;"></div>
+											<h2 class="text-xl font-bold text-gray-800"><?php esc_html_e( 'Branding & Colors', 'quick-variants' ); ?></h2>
+											<p class="text-sm text-gray-600"><?php esc_html_e( 'Customize your brand colors', 'quick-variants' ); ?></p>
+										</div>
+									</div>
+
+									<div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
+										<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+											<!-- Color Input & Presets -->
+											<div>
+												<label class="block font-semibold text-gray-800 mb-3"><?php esc_html_e( 'Primary Color', 'quick-variants' ); ?></label>
+												<div class="space-y-4">
+													<!-- Color Input -->
+													<div>
+														<?php
+														$this->field_text_enhanced(
+															array(
+																'key'         => 'button_color',
+																'placeholder' => '#006DB5',
+																'help'        => __( 'Hex color code for primary buttons and accents', 'quick-variants' ),
+															)
+														);
+														?>
+													</div>													<!-- Quick Color Presets -->
+													<div>
+														<label class="block text-sm font-medium text-gray-600 mb-2"><?php esc_html_e( 'Quick Presets', 'quick-variants' ); ?></label>
+														<div class="grid grid-cols-8 gap-1.5">
+															<?php
+															$presets = array( '#006DB5', '#7C3AED', '#DC2626', '#059669', '#EA580C', '#0891B2', '#4F46E5', '#BE185D' );
+															foreach ( $presets as $preset ) {
+																echo '<button type="button" class="qv-color-preset w-8 h-8 rounded-md border-2 border-white shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-105" data-color="' . esc_attr( $preset ) . '" style="background:' . esc_attr( $preset ) . ';" title="' . esc_attr( $preset ) . '"></button>';
+															}
+															?>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<!-- Live Preview -->
+											<div>
+												<label class="block font-semibold text-gray-800 mb-3"><?php esc_html_e( 'Live Preview', 'quick-variants' ); ?></label>
+												<div class="space-y-4">
+													<!-- Button Examples -->
+													<div class="flex flex-wrap gap-2">
+														<button type="button" id="qv-preview-button-primary"
+															class="px-4 py-2 text-sm rounded-lg text-white font-medium shadow-md hover:shadow-lg transition-all duration-200"
+															style="background:<?php echo esc_attr( $settings['button_color'] ); ?>">
+															<?php esc_html_e( 'Primary', 'quick-variants' ); ?>
+														</button>
+														<button type="button" id="qv-preview-button-outline"
+															class="px-4 py-2 text-sm rounded-lg border-2 font-medium bg-transparent hover:bg-opacity-10 transition-all duration-200"
+															style="border-color:<?php echo esc_attr( $settings['button_color'] ); ?>;color:<?php echo esc_attr( $settings['button_color'] ); ?>">
+															<?php esc_html_e( 'Outline', 'quick-variants' ); ?>
+														</button>
+													</div>
+
+													<!-- Progress Bar -->
+													<div>
+														<div class="flex justify-between text-xs text-gray-500 mb-1">
+															<span><?php esc_html_e( 'Progress', 'quick-variants' ); ?></span>
+															<span>75%</span>
+														</div>
+														<div class="w-full bg-gray-200 rounded-full h-2">
+															<div id="qv-progress-bar" class="h-2 rounded-full transition-all duration-300" style="width:75%;background:<?php echo esc_attr( $settings['button_color'] ); ?>"></div>
+														</div>
+													</div>
+
+													<!-- Filter Indicator -->
+													<div>
+														<span class="text-xs text-gray-500 mb-1 block"><?php esc_html_e( 'Active Filter', 'quick-variants' ); ?></span>
+														<span id="qv-filter-indicator" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" style="background:<?php echo esc_attr( $settings['button_color'] ); ?>15;color:<?php echo esc_attr( $settings['button_color'] ); ?>">
+															<svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+																<path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/>
+															</svg>
+															<?php esc_html_e( 'Filtered', 'quick-variants' ); ?>
+														</span>
+													</div>
+												</div>
 											</div>
 										</div>
-										<div>
-											<label class="block font-semibold text-gray-800 mb-3"><?php esc_html_e( 'Preview', 'quick-variants' ); ?></label>
-											<div class="flex gap-3">
-												<button type="button" id="qv-preview-button"
-													class="px-6 py-3 rounded-lg text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
-													style="background:<?php echo esc_attr( $settings['button_color'] ); ?>;border-color:<?php echo esc_attr( $settings['button_color'] ); ?>">
-													<?php esc_html_e( 'Sample Button', 'quick-variants' ); ?>
-												</button>
-												<button type="button" class="px-6 py-3 rounded-lg border-2 font-semibold text-gray-700 bg-white border-gray-300 hover:bg-gray-50 transition-colors">
-													<?php esc_html_e( 'Secondary Button', 'quick-variants' ); ?>
-												</button>
-											</div>
+
+										<!-- Usage Info (Compact) -->
+										<div class="mt-4 pt-4 border-t border-gray-100">
+											<p class="text-xs text-gray-500 flex items-center gap-2">
+												<svg class="w-3 h-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+												</svg>
+												<?php esc_html_e( 'Used for primary buttons, progress bars, and accent elements', 'quick-variants' ); ?>
+											</p>
 										</div>
 									</div>
 								</div>

@@ -2,13 +2,34 @@ jQuery(document).ready(function($){
   $('.quick-variants-color-field').wpColorPicker();
 
 
-  /* Live color preview */
+  /* Enhanced Live color preview */
   function updateColorPreview(){
     var val = $('#button_color').val();
     if(!val) return;
-    $('#qv-color-preview').css('background', val);
-    $('#qv-preview-button').css({background: val, borderColor: val});
+
+    // Update all preview buttons
+    $('#qv-preview-button-primary').css('background', val);
+    $('#qv-preview-button-outline').css({
+      'borderColor': val,
+      'color': val
+    });
+
+    // Update progress bar
+    $('#qv-progress-bar').css('background', val);
+
+    // Update filter indicator
+    $('#qv-filter-indicator').css({
+      'background': val + '15',
+      'color': val
+    });
   }
+
+  // Color preset buttons
+  $('.qv-color-preset').on('click', function(){
+    var color = $(this).data('color');
+    $('#button_color').val(color).trigger('input');
+  });
+
   $(document).on('change input', '#button_color', updateColorPreview);
   updateColorPreview();
 
