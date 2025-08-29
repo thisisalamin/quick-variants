@@ -13,7 +13,7 @@ function quick_variants_ajax_add_to_cart() {
 	$variation_id = isset( $_POST['variation_id'] ) ? intval( $_POST['variation_id'] ) : 0;
 	$variation    = array();
 	if ( isset( $_POST['variation'] ) && is_array( $_POST['variation'] ) ) {
-		foreach ( $_POST['variation'] as $k => $v ) {
+		foreach ( wp_unslash( $_POST['variation'] ) as $k => $v ) {
 			$variation[ sanitize_text_field( $k ) ] = sanitize_text_field( $v );
 		}
 	}
@@ -77,7 +77,7 @@ add_action( 'wp_ajax_nopriv_get_cart', 'quick_variants_ajax_get_cart' );
 
 function quick_variants_ajax_update_cart() {
 	check_ajax_referer( 'wc_cart_nonce', 'nonce' );
-	$cart_key = isset( $_POST['cart_key'] ) ? sanitize_text_field( $_POST['cart_key'] ) : '';
+	$cart_key = isset( $_POST['cart_key'] ) ? sanitize_text_field( wp_unslash( $_POST['cart_key'] ) ) : '';
 	$quantity = isset( $_POST['quantity'] ) ? intval( $_POST['quantity'] ) : 0;
 	if ( $cart_key && $quantity > 0 ) {
 		WC()->cart->set_quantity( $cart_key, $quantity );
@@ -90,7 +90,7 @@ add_action( 'wp_ajax_nopriv_update_cart', 'quick_variants_ajax_update_cart' );
 
 function quick_variants_ajax_remove_from_cart() {
 	check_ajax_referer( 'wc_cart_nonce', 'nonce' );
-	$cart_key = isset( $_POST['cart_key'] ) ? sanitize_text_field( $_POST['cart_key'] ) : '';
+	$cart_key = isset( $_POST['cart_key'] ) ? sanitize_text_field( wp_unslash( $_POST['cart_key'] ) ) : '';
 	if ( $cart_key ) {
 		WC()->cart->remove_cart_item( $cart_key );
 		wp_send_json_success( quick_variants_get_cart_totals_only() );
