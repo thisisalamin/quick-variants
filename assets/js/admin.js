@@ -12,6 +12,27 @@ jQuery(document).ready(function($){
   $(document).on('change input', '#button_color', updateColorPreview);
   updateColorPreview();
 
+  // Tab functionality
+  $('.qv-tab-btn').on('click', function(){
+    var tab = $(this).data('tab');
+
+    // Update tab buttons
+    $('.qv-tab-btn').removeClass('active').css({
+      'border-color': 'transparent',
+      'color': '#6b7280',
+      'background': 'transparent'
+    });
+    $(this).addClass('active').css({
+      'border-color': '#4f46e5',
+      'color': '#4f46e5',
+      'background': '#eef2ff'
+    });
+
+    // Update tab content
+    $('.qv-tab-content').addClass('hidden');
+    $('#' + tab + '-tab').removeClass('hidden');
+  });
+
   // Shortcode generator logic
   function buildShortcode(){
     var base = '[quick_variants';
@@ -51,5 +72,26 @@ jQuery(document).ready(function($){
   });
   $('#qv-cat-clear').on('click', function(){
     $('.qv-cat-grid .qv-gen-cat').prop('checked', false); buildShortcode();
+  });
+
+  // Enhanced animations and interactions
+  $('.qv-tab-btn').hover(
+    function(){
+      if(!$(this).hasClass('active')){
+        $(this).css('background', '#f9fafb');
+      }
+    },
+    function(){
+      if(!$(this).hasClass('active')){
+        $(this).css('background', 'transparent');
+      }
+    }
+  );
+
+  // Add smooth transitions to form elements
+  $('input, select, textarea').on('focus', function(){
+    $(this).parent().addClass('focused');
+  }).on('blur', function(){
+    $(this).parent().removeClass('focused');
   });
 });

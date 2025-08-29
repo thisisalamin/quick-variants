@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Admin panel specific components */
+/* Enhanced Admin Panel Components */
 @layer components {
   .qv-card { @apply bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6; }
   .qv-card h2 { @apply text-lg font-semibold mb-4; }
@@ -15,45 +15,199 @@
   .qv-submit-wrapper { @apply mt-8; }
   .qv-color-wrapper { @apply flex items-center gap-3; }
   .qv-color-preview { @apply h-8 w-8 rounded border border-gray-300 shadow-inner; }
-  /* New settings layout */
-  .qv-settings-wrap { @apply max-w-5xl; }
-  .qv-header-bar { @apply flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6; }
-  .qv-page-title { @apply flex items-center gap-3 text-2xl font-bold tracking-tight; }
-  .qv-page-title .title-text { @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400; }
-  .qv-version { @apply text-[11px] font-semibold px-2 py-0.5 rounded bg-indigo-100 text-indigo-700; }
-  .qv-subtitle { @apply text-sm text-gray-600; }
-  .qv-reset-link { @apply inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-red-600 hover:text-red-700 border border-red-200 hover:border-red-300 rounded-md px-3 py-2 bg-white shadow-sm transition; }
-  .qv-tabs-card { @apply p-0; }
-  .qv-tabs-alt { @apply flex flex-wrap gap-2 border-b border-gray-200 px-6 pt-4 bg-white sticky top-0 z-10; }
-  .qv-tab-btn { @apply relative font-medium text-sm px-4 py-2 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-indigo-600 hover:border-indigo-300 transition shadow-sm; }
-  .qv-tab-btn.active { @apply bg-indigo-50 border-indigo-400 text-indigo-700 shadow; }
-  .qv-form { @apply p-6; }
-  .qv-fields-grid { @apply grid gap-6 md:grid-cols-2; }
-  .qv-field .description { @apply text-xs text-gray-500 mt-1; }
-  .qv-primary-btn { @apply !bg-indigo-600 !border-indigo-600 hover:!bg-indigo-700 hover:!border-indigo-700 font-semibold text-sm px-6 py-3 rounded-md; }
-  .qv-tab-panel { @apply animate-fadeIn; }
-  /* Two-column layout */
-  .qv-layout { @apply w-full flex flex-col lg:flex-row gap-6; }
-  .qv-form-columns { @apply w-full flex flex-col lg:flex-row gap-6; }
-  .qv-col-main { @apply flex-1 flex flex-col gap-6; }
-  .qv-col-side { @apply w-full lg:w-80 flex flex-col gap-6; }
-  .qv-group-title { @apply text-sm font-semibold uppercase tracking-wide text-gray-700 mb-4; }
-  .qv-side-card .qv-group-title { @apply mb-3; }
-  .qv-side-intro { @apply text-xs text-gray-500 mb-4; }
-  .qv-links { @apply list-none m-0 p-0 flex flex-col gap-2; }
-  .qv-link-item { @apply text-sm text-indigo-600 hover:text-indigo-700 font-medium; }
-  .qv-small-note { @apply mt-4 text-[11px] text-gray-500 leading-snug; }
-  .qv-resources { @apply relative; }
-  .qv-sticky-save { @apply mt-8; }
-  @screen lg { .qv-sticky-save { @apply sticky bottom-4 self-start; } }
+
+  /* Enhanced Tab System */
+  .qv-tab-btn {
+    @apply relative font-medium text-sm px-6 py-4 rounded-md bg-white border border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 transition-all duration-200 cursor-pointer;
+  }
+  .qv-tab-btn.active {
+    @apply bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm;
+  }
+  .qv-tab-btn:hover:not(.active) {
+    @apply bg-gray-50;
+  }
+  .qv-tab-content {
+    @apply animate-fadeIn;
+  }
+  .qv-tab-content.hidden {
+    display: none;
+  }
+
+  /* Enhanced Form Elements */
+  .qv-form-group {
+    @apply p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors;
+  }
+  .qv-form-group.focused {
+    @apply border-indigo-500 ring-2 ring-indigo-100;
+  }
+
+  /* Enhanced Buttons */
+  .qv-btn-primary {
+    @apply inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5;
+  }
+  .qv-btn-secondary {
+    @apply inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors;
+  }
+
+  /* Enhanced Cards */
+  .qv-card-primary {
+    @apply bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-sm;
+  }
+  .qv-card-success {
+    @apply bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl shadow-sm;
+  }
+  .qv-card-warning {
+    @apply bg-gradient-to-br from-orange-50 to-red-50 border border-orange-200 rounded-xl shadow-sm;
+  }
+  .qv-card-info {
+    @apply bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-xl shadow-sm;
+  }
+
+  /* Enhanced Header */
+  .qv-header-gradient {
+    @apply bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-800 shadow-xl rounded-2xl;
+  }
+  .qv-header-icon {
+    @apply bg-white/20 backdrop-blur-sm p-3 rounded-xl;
+  }
+  .qv-header-title {
+    @apply text-3xl font-bold tracking-tight text-white;
+  }
+  .qv-header-subtitle {
+    @apply text-indigo-100 text-sm mt-1;
+  }
+  .qv-version-badge {
+    @apply bg-white/20 backdrop-blur-sm text-xs font-semibold px-3 py-1.5 rounded-full;
+  }
+
+  /* Enhanced Sidebar */
+  .qv-sidebar-card {
+    @apply bg-white shadow-lg rounded-xl border border-gray-200 overflow-hidden;
+  }
+  .qv-sidebar-header {
+    @apply flex items-center gap-3 p-6 border-b border-gray-200 bg-gray-50/50;
+  }
+  .qv-sidebar-icon {
+    @apply bg-gradient-to-br from-green-100 to-emerald-100 p-2 rounded-lg;
+  }
+  .qv-sidebar-title {
+    @apply text-lg font-bold text-gray-800;
+  }
+
+  /* Enhanced Toggle Switch */
+  .qv-toggle {
+    @apply relative inline-flex items-center cursor-pointer;
+  }
+  .qv-toggle input {
+    @apply sr-only;
+  }
+  .qv-toggle .toggle-slider {
+    width: 44px;
+    height: 24px;
+    background-color: #e5e7eb;
+    border-radius: 9999px;
+    transition: background-color 0.2s ease;
+    position: relative;
+  }
+  .qv-toggle .toggle-slider:before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 9999px;
+    transition: transform 0.2s ease;
+  }
+  .qv-toggle input:checked + .toggle-slider {
+    background-color: #4f46e5;
+  }
+  .qv-toggle input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+  }
+  .qv-toggle input:focus + .toggle-slider {
+    box-shadow: 0 0 0 2px #c7d2fe;
+  }
+
+  /* Enhanced Inputs */
+  .qv-input-enhanced {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-colors;
+  }
+  .qv-input-enhanced:focus {
+    @apply border-indigo-500 ring-2 ring-indigo-100;
+  }
+
+  /* Enhanced Shortcode Generator */
+  .qv-shortcode-input {
+    @apply flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 font-mono text-sm;
+  }
+  .qv-copy-btn {
+    @apply px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors;
+  }
+
+  /* Enhanced Category List */
+  .qv-category-list {
+    @apply max-h-40 overflow-auto border border-gray-200 rounded-lg p-3 bg-gray-50 space-y-2;
+  }
+  .qv-category-item {
+    @apply flex items-center gap-2 text-sm hover:bg-white p-2 rounded-lg cursor-pointer transition-colors;
+  }
+  .qv-category-checkbox {
+    @apply w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500;
+  }
+
+  /* Enhanced Save Button */
+  .qv-save-btn {
+    @apply inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1;
+  }
+
+  /* Utility Classes */
+  .qv-grid-responsive {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+  .qv-flex-center {
+    @apply flex items-center justify-center;
+  }
+  .qv-text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400;
+  }
 }
 
 @layer utilities {
-  @keyframes fadeIn { from { opacity:0; transform:translateY(4px);} to { opacity:1; transform:translateY(0);} }
-  .animate-fadeIn { animation: fadeIn .25s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fadeIn {
+    animation: fadeIn .25s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .animate-slideIn {
+    animation: slideIn .3s ease;
+  }
 }
 
-/* Utilities override for WP admin dark modes (optional) */
+/* WordPress Admin Integration */
 @layer utilities {
-  .qv-bg-gradient { @apply bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400; }
+  .qv-bg-gradient {
+    @apply bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400;
+  }
+
+  /* Override WP admin styles */
+  .wp-admin .qv-admin {
+    @apply max-w-none;
+  }
+
+  .wp-admin .qv-admin .form-table {
+    display: none;
+  }
+
+  .wp-admin .qv-admin .submit {
+    display: none;
+  }
 }
