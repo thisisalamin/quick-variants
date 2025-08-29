@@ -10,7 +10,7 @@
  * Text Domain: quick-variants
  * Domain Path: /languages
  * Requires at least: 5.0
- * Tested up to: 6.4
+ * Tested up to: 6.8
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Core constants.
-define( 'QUICK_VARIANTS_VERSION', '1.0.0' );
+define( 'QUICK_VARIANTS_VERSION', '1.0' );
 define( 'QUICK_VARIANTS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'QUICK_VARIANTS_URL', plugin_dir_url( __FILE__ ) );
 
