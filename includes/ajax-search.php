@@ -34,8 +34,10 @@ function quick_variants_ajax_search_products() {
 		'order'          => 'ASC',
 		'posts_per_page' => $per_page,
 		'offset'         => $offset,
+		'no_found_rows'  => true, // Skip found_rows calculation for main query
 	);
 	if ( ! empty( $category ) ) {
+		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Necessary for category filtering, limited by posts_per_page and offset
 		$args['tax_query'] = array(
 			array(
 				'taxonomy' => 'product_cat',
@@ -53,12 +55,15 @@ function quick_variants_ajax_search_products() {
 		$args['s'] = $search_term;
 	}
 
-	$count_args                   = $args;
-	$count_args['posts_per_page'] = -1;
-	$count_args['offset']         = 0;
-	$count_args['fields']         = 'ids';
-	$count_query                  = new WP_Query( $count_args );
-	$total_products               = $count_query->found_posts;
+	$count_args                           = $args;
+	$count_args['posts_per_page']         = -1;
+	$count_args['offset']                 = 0;
+	$count_args['fields']                 = 'ids';
+	$count_args['no_found_rows']          = false; // We need found_rows for count
+	$count_args['update_post_meta_cache'] = false; // Skip post meta cache for count query
+	$count_args['update_post_term_cache'] = false; // Skip term cache for count query
+	$count_query                          = new WP_Query( $count_args );
+	$total_products                       = $count_query->found_posts;
 	wp_reset_postdata();
 
 	$loop = new WP_Query( $args );

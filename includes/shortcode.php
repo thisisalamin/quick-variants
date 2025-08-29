@@ -16,12 +16,16 @@ function quick_variants_shortcode( $atts ) {
 	);
 
 	$args_for_count = array(
-		'post_type'      => 'product',
-		'posts_per_page' => -1,
-		'orderby'        => 'title',
-		'order'          => 'ASC',
+		'post_type'              => 'product',
+		'posts_per_page'         => -1,
+		'orderby'                => 'title',
+		'order'                  => 'ASC',
+		'no_found_rows'          => false, // We need found_rows for pagination
+		'update_post_meta_cache' => false, // Skip post meta cache for count query
+		'update_post_term_cache' => false, // Skip term cache for count query
 	);
 	if ( ! empty( $atts['category'] ) ) {
+		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Necessary for category filtering, optimized with cache flags
 		$args_for_count['tax_query'] = array(
 			array(
 				'taxonomy' => 'product_cat',
@@ -39,8 +43,10 @@ function quick_variants_shortcode( $atts ) {
 		'orderby'        => 'title',
 		'order'          => 'ASC',
 		'posts_per_page' => $atts['per_page'],
+		'no_found_rows'  => true, // Skip found_rows calculation for display query
 	);
 	if ( ! empty( $atts['category'] ) ) {
+		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Necessary for category filtering, limited by posts_per_page
 		$args_for_display['tax_query'] = array(
 			array(
 				'taxonomy' => 'product_cat',
