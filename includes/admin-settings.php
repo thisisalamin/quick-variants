@@ -368,7 +368,7 @@ class Quick_Variants_Settings {
 												<?php esc_html_e( 'Products Per Page', 'quick-variants' ); ?>
 											</label>
 											<input type="number" min="1" max="100" id="qv-gen-per-page" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="<?php echo esc_attr( $default_per_page ); ?>" />
-											<p class="text-xs text-gray-500 mt-1"><?php printf( esc_html__( 'Blank = default (%d)', 'quick-variants' ), $default_per_page ); ?></p>
+											<p class="text-xs text-gray-500 mt-1"><?php printf( esc_html__( 'Blank = default (%d)', 'quick-variants' ), esc_html( $default_per_page ) ); ?></p>
 										</div>
 
 										<div>
@@ -513,7 +513,7 @@ class Quick_Variants_Settings {
 		$key      = $args['key'];
 		$checked  = ! empty( $settings[ $key ] ) ? 'checked' : '';
 		echo '<label class="qv-toggle">
-			<input type="checkbox" id="' . esc_attr( $key ) . '" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="1" ' . $checked . '>
+			<input type="checkbox" id="' . esc_attr( $key ) . '" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="1" ' . esc_attr( $checked ) . '>
 			<span class="toggle-slider"></span>
 		</label>';
 	}
@@ -528,7 +528,7 @@ class Quick_Variants_Settings {
 				$attrs .= sprintf( ' %s="%s"', esc_attr( $attr ), esc_attr( $val ) );
 			}
 		}
-		echo '<input type="number" id="' . esc_attr( $key ) . '" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="' . esc_attr( $value ) . '" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" ' . $attrs . ' />';
+		echo '<input type="number" id="' . esc_attr( $key ) . '" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="' . esc_attr( $value ) . '" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" ' . wp_kses_post( $attrs ) . ' />';
 		if ( ! empty( $args['help'] ) ) {
 			echo '<p class="text-xs text-gray-500 mt-1">' . esc_html( $args['help'] ) . '</p>';
 		}
@@ -540,7 +540,7 @@ class Quick_Variants_Settings {
 		$value       = isset( $settings[ $key ] ) ? esc_attr( $settings[ $key ] ) : '';
 		$placeholder = isset( $args['placeholder'] ) ? esc_attr( $args['placeholder'] ) : '';
 		$extra_class = ( 'button_color' === $key ) ? ' quick-variants-color-field' : '';
-		echo '<input type="text" id="' . esc_attr( $key ) . '" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="' . $value . '" placeholder="' . $placeholder . '" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm' . esc_attr( $extra_class ) . '" />';
+		echo '<input type="text" id="' . esc_attr( $key ) . '" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="' . esc_attr( $value ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm' . esc_attr( $extra_class ) . '" />';
 		if ( ! empty( $args['help'] ) ) {
 			echo '<p class="text-xs text-gray-500 mt-1">' . esc_html( $args['help'] ) . '</p>';
 		}
