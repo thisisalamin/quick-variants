@@ -13,7 +13,8 @@ function quick_variants_ajax_add_to_cart() {
 	$variation_id = isset( $_POST['variation_id'] ) ? intval( $_POST['variation_id'] ) : 0;
 	$variation    = array();
 	if ( isset( $_POST['variation'] ) && is_array( $_POST['variation'] ) ) {
-		foreach ( wp_unslash( $_POST['variation'] ) as $k => $v ) {
+		$variation_data = wp_unslash( $_POST['variation'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		foreach ( $variation_data as $k => $v ) {
 			$variation[ sanitize_text_field( $k ) ] = sanitize_text_field( $v );
 		}
 	}
