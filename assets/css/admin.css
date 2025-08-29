@@ -17,15 +17,7 @@
   .qv-color-preview { @apply h-8 w-8 rounded border border-gray-300 shadow-inner; }
 
   /* Enhanced Tab System */
-  .qv-tab-btn {
-    @apply relative font-medium text-sm px-6 py-4 rounded-md bg-white border border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 transition-all duration-200 cursor-pointer;
-  }
-  .qv-tab-btn.active {
-    @apply bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm;
-  }
-  .qv-tab-btn:hover:not(.active) {
-    @apply bg-gray-50;
-  }
+
   .qv-tab-content {
     @apply animate-fadeIn;
   }

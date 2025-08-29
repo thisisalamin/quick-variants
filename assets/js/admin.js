@@ -18,15 +18,15 @@ jQuery(document).ready(function($){
 
     // Update tab buttons
     $('.qv-tab-btn').removeClass('active').css({
-      'border-color': 'transparent',
-      'color': '#6b7280',
-      'background': 'transparent'
+      'color': '#6b7280'
     });
+    $('.qv-tab-btn svg').css('color', '#6b7280');
+
+    // Update active tab
     $(this).addClass('active').css({
-      'border-color': '#4f46e5',
-      'color': '#4f46e5',
-      'background': '#eef2ff'
+      'color': '#4f46e5'
     });
+    $(this).find('svg').css('color', '#4f46e5');
 
     // Update tab content
     $('.qv-tab-content').addClass('hidden');
