@@ -19,9 +19,9 @@ function quick_variants_filter_title_first_letter( $where ) {
 /** Unified AJAX search/filter/pagination endpoint */
 function quick_variants_ajax_search_products() {
 	check_ajax_referer( 'wc_filter_nonce', 'nonce' );
-	$search_term      = isset( $_POST['search'] ) ? sanitize_text_field( $_POST['search'] ) : '';
-	$letter           = isset( $_POST['letter'] ) ? sanitize_text_field( $_POST['letter'] ) : '';
-	$category         = isset( $_POST['category'] ) ? sanitize_text_field( $_POST['category'] ) : '';
+	$search_term      = isset( $_POST['search'] ) ? sanitize_text_field( wp_unslash( $_POST['search'] ) ) : '';
+	$letter           = isset( $_POST['letter'] ) ? sanitize_text_field( wp_unslash( $_POST['letter'] ) ) : '';
+	$category         = isset( $_POST['category'] ) ? sanitize_text_field( wp_unslash( $_POST['category'] ) ) : '';
 	$per_page         = isset( $_POST['per_page'] ) ? intval( $_POST['per_page'] ) : 10;
 	$page             = isset( $_POST['page'] ) ? intval( $_POST['page'] ) : 1;
 	$visible_variants = isset( $_POST['visible_variants'] ) ? array_map( 'intval', (array) $_POST['visible_variants'] ) : array();
