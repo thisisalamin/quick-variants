@@ -12,13 +12,13 @@ jQuery(document).ready(function($) {
         button.prop('disabled', true).text('Adding...');
 
         $.ajax({
-            url: wcCart.ajaxUrl,
+            url: quicvaCart.ajaxUrl,
             type: 'POST',
             data: {
-                action: 'add_to_cart',
+                action: 'quicva_add_to_cart',
                 product_id: productId,
                 quantity: quantity,
-                nonce: wcCart.nonce
+                nonce: quicvaCart.nonce
             },
             success: function(response) {
                 if (response.success) {
@@ -110,13 +110,13 @@ jQuery(document).ready(function($) {
         const quantity = input.val();
 
         $.ajax({
-            url: wcCart.ajaxUrl,
+            url: quicvaCart.ajaxUrl,
             type: 'POST',
             data: {
-                action: 'update_cart',
+                action: 'quicva_update_cart',
                 cart_key: cartKey,
                 quantity: quantity,
-                nonce: wcCart.nonce
+                nonce: quicvaCart.nonce
             },
             success: function(response) {
                 if (response.success) {
@@ -134,12 +134,12 @@ jQuery(document).ready(function($) {
         const cartKey = cartItem.data('key');
 
         $.ajax({
-            url: wcCart.ajaxUrl,
+            url: quicvaCart.ajaxUrl,
             type: 'POST',
             data: {
-                action: 'remove_from_cart',
+                action: 'quicva_remove_from_cart',
                 cart_key: cartKey,
-                nonce: wcCart.nonce
+                nonce: quicvaCart.nonce
             },
             success: function(response) {
                 if (response.success) {

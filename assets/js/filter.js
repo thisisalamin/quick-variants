@@ -20,16 +20,16 @@ jQuery(document).ready(function($) {
     function updateProducts(searchTerm = '', letter = 'all', page = 1, append = false) {
         const perPage  = $('#product-table').data('per-page') || 10;
         $.ajax({
-            url: wcFilter.ajaxUrl,
+            url: quicvaFilter.ajaxUrl,
             type: 'POST',
             data: {
-                action:           'search_products',
-                nonce:            wcFilter.nonce,
+                action:           'quicva_search_products',
+                nonce:            quicvaFilter.nonce,
                 search:           searchTerm,
                 letter:           letter,
                 page:             page,
                 per_page:         perPage,
-                category:         wcFilter.category,
+                category:         quicvaFilter.category,
                 visible_variants: Array.from(visibleVariants)
             },
             beforeSend: function() {

@@ -1,9 +1,9 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; }
-class Quick_Variants_Settings {
-	const OPTION_KEY = 'quick_variants_settings';
-	const NONCE_KEY  = 'quick_variants_settings_nonce';
+class QUICVA_Settings {
+	const OPTION_KEY = 'quicva_settings';
+	const NONCE_KEY  = 'quicva_settings_nonce';
 
 	private static $instance = null;
 
@@ -24,11 +24,11 @@ class Quick_Variants_Settings {
 	public function maybe_handle_reset() {
 		if ( ! is_admin() || ! current_user_can( 'manage_options' ) ) {
 			return; }
-		$qv_reset = filter_input( INPUT_GET, 'qv_reset', FILTER_SANITIZE_NUMBER_INT );
-		$nonce    = filter_input( INPUT_GET, '_qvnonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( empty( $qv_reset ) || empty( $nonce ) ) {
+		$quicva_reset = filter_input( INPUT_GET, 'quicva_reset', FILTER_SANITIZE_NUMBER_INT );
+		$nonce        = filter_input( INPUT_GET, '_quicva_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( empty( $quicva_reset ) || empty( $nonce ) ) {
 			return; }
-		if ( ! wp_verify_nonce( $nonce, 'qv_reset_defaults' ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'quicva_reset_defaults' ) ) {
 			return; }
 		delete_option( self::OPTION_KEY );
 		wp_safe_redirect( admin_url( 'admin.php?page=quick-variants-settings&reset=1' ) );
@@ -111,12 +111,12 @@ class Quick_Variants_Settings {
 		$reset_url = wp_nonce_url(
 			add_query_arg(
 				array(
-					'page'     => 'quick-variants-settings',
-					'qv_reset' => 1,
+					'page'         => 'quick-variants-settings',
+					'quicva_reset' => 1,
 				)
 			),
-			'qv_reset_defaults',
-			'_qvnonce'
+			'quicva_reset_defaults',
+			'_quicva_nonce'
 		);
 		?>
 
@@ -137,7 +137,7 @@ class Quick_Variants_Settings {
 				</div>
 				<div class="flex items-center gap-3">
 					<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full">
-						v<?php echo esc_html( QUICK_VARIANTS_VERSION ); ?>
+						v<?php echo esc_html( QUICVA_VERSION ); ?>
 					</span>
 					<a href="<?php echo esc_url( $reset_url ); ?>"
 						onclick="return confirm('<?php echo esc_js( __( 'Reset all settings to defaults? This cannot be undone.', 'quick-variants' ) ); ?>');"
@@ -552,12 +552,12 @@ class Quick_Variants_Settings {
 	}
 }
 
-Quick_Variants_Settings::instance();
+QUICVA_Settings::instance();
 
 /**
  * Helper to fetch a single setting easily.
  */
 function quick_variants_get_setting( $key ) {
-	$settings = Quick_Variants_Settings::get_settings();
+	$settings = QUICVA_Settings::get_settings();
 	return isset( $settings[ $key ] ) ? $settings[ $key ] : null;
 }

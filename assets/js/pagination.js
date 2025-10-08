@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
         const currentPage = parseInt(button.data('page'));
         const perPage = parseInt(button.data('per-page'));
         const total = parseInt(button.data('total'));
-        
+
         const buttonContent = button.find('.button-content');
         const buttonText = buttonContent.find('.button-text');
         const loader = buttonContent.find('.loader');
@@ -15,27 +15,27 @@ jQuery(document).ready(function($) {
         loader.show();
 
         $.ajax({
-            url: wcPagination.ajaxUrl,
+            url: quicvaPagination.ajaxUrl,
             type: 'POST',
             data: {
-                action: 'load_more_products',
-                nonce: wcPagination.nonce,
+                action: 'quicva_load_more_products',
+                nonce: quicvaPagination.nonce,
                 page: currentPage + 1,
                 per_page: perPage,
-                category: wcPagination.category // Always include the category
+                category: quicvaPagination.category // Always include the category
             },
             success: function(response) {
                 if (response.success) {
                     // Append new products
                     $('#product-table tbody').append(response.data.html);
-                    
+
                     // Trigger custom event after content is loaded
                     $(document).trigger('productsLoaded');
-                    
+
                     // Update pagination counter
                     const startCount = 1;
                     const endCount = Math.min((currentPage + 1) * perPage, total);
-                    
+
                     $('[data-total-start]').text(startCount);
                     $('[data-total-end]').text(endCount);
 

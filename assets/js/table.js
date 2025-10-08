@@ -1,17 +1,17 @@
 jQuery(document).ready(function($) {
     // Hide all variants initially
     $('.variant-row').hide().removeClass('show');
-    
+
     // Toggle variants with improved mobile support and event handling
     $(document).on('click', '.toggle-variants', function(e) {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation(); // Prevent multiple triggers
-        
+
         const $button = $(this);
         const productId = $button.data('id');
         const $variants = $('.variant-' + productId);
-        
+
         // Toggle show class and visibility
         if ($variants.hasClass('show')) {
             $variants
@@ -20,7 +20,7 @@ jQuery(document).ready(function($) {
                 .hide()
                 .removeClass('hiding'); // Remove transitional class
             $button.text('SHOW VARIANTS');
-            
+
             // Force hide on mobile with !important
             $variants.attr('style', 'display: none !important');
         } else {
@@ -29,7 +29,7 @@ jQuery(document).ready(function($) {
                 .show()
                 .removeAttr('style'); // Remove forced styling
             $button.text('HIDE VARIANTS');
-            
+
             // Force proper display for mobile
             if (window.innerWidth <= 767) {
                 $variants.css({
@@ -49,7 +49,7 @@ jQuery(document).ready(function($) {
     // Handle "SHOW MORE" button click
     $(document).on('click', '.show-more-button', function(e) {
         e.preventDefault();
-        
+
         var button = $(this);
         var page = button.data('page');
         var perPage = button.data('per-page');
@@ -57,11 +57,11 @@ jQuery(document).ready(function($) {
         var category = button.data('category');
 
         $.ajax({
-            url: wcPagination.ajaxUrl,
+            url: quicvaPagination.ajaxUrl,
             type: 'POST',
             data: {
-                action: 'search_products', // Changed to use the unified search endpoint
-                nonce: wcPagination.nonce,
+                action: 'quicva_search_products', // Changed to use the unified search endpoint
+                nonce: quicvaPagination.nonce,
                 page: page + 1,
                 per_page: perPage,
                 category: category
@@ -74,15 +74,15 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     $('#product-table tbody').append(response.data.html);
                     button.data('page', page + 1);
-                    
+
                     // Update the showing count
                     var startCount = 1;
                     var endCount = (page + 1) * perPage;
                     if (endCount > total) endCount = total;
-                    
+
                     $('[data-total-start]').text(startCount);
                     $('[data-total-end]').text(endCount);
-                    
+
                     // Update progress bar
                     var progressPercent = (endCount / total) * 100;
                     $('.pagination-total-item').css('width', progressPercent + '%');
@@ -105,7 +105,7 @@ jQuery(document).ready(function($) {
         var startCount = 1;
         var endCount = currentCount;
         if (endCount > total) endCount = total;
-        
+
         $('[data-total-start]').text(startCount);
         $('[data-total-end]').text(endCount);
         $('.pagination-total-progress span').css('width', ((endCount / total) * 100) + '%');

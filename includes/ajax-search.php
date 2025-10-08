@@ -18,7 +18,7 @@ function quick_variants_filter_title_first_letter( $where ) {
 
 /** Unified AJAX search/filter/pagination endpoint */
 function quick_variants_ajax_search_products() {
-	check_ajax_referer( 'wc_filter_nonce', 'nonce' );
+	check_ajax_referer( 'quicva_filter_nonce', 'nonce' );
 	$search_term      = isset( $_POST['search'] ) ? sanitize_text_field( wp_unslash( $_POST['search'] ) ) : '';
 	$letter           = isset( $_POST['letter'] ) ? sanitize_text_field( wp_unslash( $_POST['letter'] ) ) : '';
 	$category         = isset( $_POST['category'] ) ? sanitize_text_field( wp_unslash( $_POST['category'] ) ) : '';
@@ -72,7 +72,7 @@ function quick_variants_ajax_search_products() {
 		$loop->the_post();
 		global $product;
 		set_query_var( 'visible_variants', $visible_variants );
-		include QUICK_VARIANTS_PATH . 'templates/product-row.php';
+		include QUICVA_PATH . 'templates/product-row.php';
 	endwhile;
 	wp_reset_postdata();
 
@@ -98,5 +98,5 @@ function quick_variants_ajax_search_products() {
 		)
 	);
 }
-add_action( 'wp_ajax_search_products', 'quick_variants_ajax_search_products' );
-add_action( 'wp_ajax_nopriv_search_products', 'quick_variants_ajax_search_products' );
+add_action( 'wp_ajax_quicva_search_products', 'quick_variants_ajax_search_products' );
+add_action( 'wp_ajax_nopriv_quicva_search_products', 'quick_variants_ajax_search_products' );

@@ -6,48 +6,48 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Enqueue scripts and styles.
  */
 function quick_variants_enqueue_assets() {
-	wp_enqueue_style( 'quick-variants-styles', QUICK_VARIANTS_URL . 'assets/css/dist/style.css', array(), QUICK_VARIANTS_VERSION );
-	wp_enqueue_style( 'quick-variants-custom', QUICK_VARIANTS_URL . 'assets/css/table.css', array(), QUICK_VARIANTS_VERSION );
+	wp_enqueue_style( 'quick-variants-styles', QUICVA_URL . 'assets/css/dist/style.css', array(), QUICVA_VERSION );
+	wp_enqueue_style( 'quick-variants-custom', QUICVA_URL . 'assets/css/table.css', array(), QUICVA_VERSION );
 
-	wp_enqueue_script( 'quick-variants-table', QUICK_VARIANTS_URL . 'assets/js/table.js', array( 'jquery' ), QUICK_VARIANTS_VERSION, true );
+	wp_enqueue_script( 'quick-variants-table', QUICVA_URL . 'assets/js/table.js', array( 'jquery' ), QUICVA_VERSION, true );
 	wp_localize_script(
 		'quick-variants-table',
-		'wcPagination',
+		'quicvaPagination',
 		array(
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-			'nonce'   => wp_create_nonce( 'wc_pagination_nonce' ),
+			'nonce'   => wp_create_nonce( 'quicva_pagination_nonce' ),
 		)
 	);
 
-	wp_enqueue_script( 'quick-variants-cart', QUICK_VARIANTS_URL . 'assets/js/cart.js', array( 'jquery' ), QUICK_VARIANTS_VERSION, true );
+	wp_enqueue_script( 'quick-variants-cart', QUICVA_URL . 'assets/js/cart.js', array( 'jquery' ), QUICVA_VERSION, true );
 	wp_localize_script(
 		'quick-variants-cart',
-		'wcCart',
+		'quicvaCart',
 		array(
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-			'nonce'   => wp_create_nonce( 'wc_cart_nonce' ),
+			'nonce'   => wp_create_nonce( 'quicva_cart_nonce' ),
 		)
 	);
 
-	wp_enqueue_script( 'quick-variants-filter', QUICK_VARIANTS_URL . 'assets/js/filter.js', array( 'jquery' ), QUICK_VARIANTS_VERSION, true );
+	wp_enqueue_script( 'quick-variants-filter', QUICVA_URL . 'assets/js/filter.js', array( 'jquery' ), QUICVA_VERSION, true );
 	wp_localize_script(
 		'quick-variants-filter',
-		'wcFilter',
+		'quicvaFilter',
 		array(
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-			'nonce'   => wp_create_nonce( 'wc_filter_nonce' ),
+			'nonce'   => wp_create_nonce( 'quicva_filter_nonce' ),
 		)
 	);
 
 	// Quick view
 	if ( function_exists( 'quick_variants_get_setting' ) && quick_variants_get_setting( 'enable_quick_view' ) ) {
-		wp_enqueue_script( 'quick-variants-quick-view', QUICK_VARIANTS_URL . 'assets/js/quick-view.js', array( 'jquery' ), QUICK_VARIANTS_VERSION, true );
+		wp_enqueue_script( 'quick-variants-quick-view', QUICVA_URL . 'assets/js/quick-view.js', array( 'jquery' ), QUICVA_VERSION, true );
 		wp_localize_script(
 			'quick-variants-quick-view',
-			'wcQuickView',
+			'quicvaQuickView',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'wc_filter_nonce' ),
+				'nonce'   => wp_create_nonce( 'quicva_filter_nonce' ),
 			)
 		);
 	}
@@ -70,7 +70,7 @@ function quick_variants_admin_assets( $hook ) {
 	if ( $hook !== 'toplevel_page_quick-variants-settings' ) {
 		return; }
 	wp_enqueue_style( 'wp-color-picker' );
-	wp_enqueue_style( 'quick-variants-admin', QUICK_VARIANTS_URL . 'assets/css/dist/admin.css', array(), QUICK_VARIANTS_VERSION );
-	wp_enqueue_script( 'quick-variants-admin', QUICK_VARIANTS_URL . 'assets/js/admin.js', array( 'wp-color-picker' ), QUICK_VARIANTS_VERSION, true );
+	wp_enqueue_style( 'quick-variants-admin', QUICVA_URL . 'assets/css/dist/admin.css', array(), QUICVA_VERSION );
+	wp_enqueue_script( 'quick-variants-admin', QUICVA_URL . 'assets/js/admin.js', array( 'wp-color-picker' ), QUICVA_VERSION, true );
 }
 add_action( 'admin_enqueue_scripts', 'quick_variants_admin_assets' );

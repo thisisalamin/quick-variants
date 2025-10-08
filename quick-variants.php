@@ -18,19 +18,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Core constants.
-define( 'QUICK_VARIANTS_VERSION', '1.0' );
-define( 'QUICK_VARIANTS_PATH', plugin_dir_path( __FILE__ ) );
-define( 'QUICK_VARIANTS_URL', plugin_dir_url( __FILE__ ) );
+define( 'QUICVA_VERSION', '1.0' );
+define( 'QUICVA_PATH', plugin_dir_path( __FILE__ ) );
+define( 'QUICVA_URL', plugin_dir_url( __FILE__ ) );
 
 // Autoload (simple) or manual includes.
-require_once QUICK_VARIANTS_PATH . 'includes/enqueue.php';
-require_once QUICK_VARIANTS_PATH . 'includes/shortcode.php';
-require_once QUICK_VARIANTS_PATH . 'includes/template-cart.php';
-require_once QUICK_VARIANTS_PATH . 'includes/ajax-cart.php';
-require_once QUICK_VARIANTS_PATH . 'includes/ajax-search.php';
-require_once QUICK_VARIANTS_PATH . 'includes/helpers.php';
-require_once QUICK_VARIANTS_PATH . 'includes/admin-settings.php';
+require_once QUICVA_PATH . 'includes/enqueue.php';
+require_once QUICVA_PATH . 'includes/shortcode.php';
+require_once QUICVA_PATH . 'includes/template-cart.php';
+require_once QUICVA_PATH . 'includes/ajax-cart.php';
+require_once QUICVA_PATH . 'includes/ajax-search.php';
+require_once QUICVA_PATH . 'includes/helpers.php';
+require_once QUICVA_PATH . 'includes/admin-settings.php';
 // Quick view AJAX handler
-require_once QUICK_VARIANTS_PATH . 'includes/ajax-quick-view.php';
+require_once QUICVA_PATH . 'includes/ajax-quick-view.php';
 
 // Future: activation / deactivation hooks could go here.

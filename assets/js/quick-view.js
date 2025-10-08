@@ -24,19 +24,19 @@ jQuery(document).ready(function($) {
         setTimeout(function() { root.addClass('qv-visible'); }, 16);
     }
 
-        // Resolve ajaxUrl and nonce from localized objects (prefer wcQuickView)
-        var ajaxUrl = (typeof wcQuickView !== 'undefined' && wcQuickView.ajaxUrl) ? wcQuickView.ajaxUrl :
-            ((typeof wcFilter !== 'undefined' && wcFilter.ajaxUrl) ? wcFilter.ajaxUrl :
-                ((typeof wcPagination !== 'undefined' && wcPagination.ajaxUrl) ? wcPagination.ajaxUrl : (typeof wcCart !== 'undefined' ? wcCart.ajaxUrl : '')));
-        var ajaxNonce = (typeof wcQuickView !== 'undefined' && wcQuickView.nonce) ? wcQuickView.nonce :
-            ((typeof wcFilter !== 'undefined' && wcFilter.nonce) ? wcFilter.nonce :
-                ((typeof wcPagination !== 'undefined' && wcPagination.nonce) ? wcPagination.nonce : (typeof wcCart !== 'undefined' ? wcCart.nonce : '')));
+        // Resolve ajaxUrl and nonce from localized objects (prefer quicvaQuickView)
+        var ajaxUrl = (typeof quicvaQuickView !== 'undefined' && quicvaQuickView.ajaxUrl) ? quicvaQuickView.ajaxUrl :
+            ((typeof quicvaFilter !== 'undefined' && quicvaFilter.ajaxUrl) ? quicvaFilter.ajaxUrl :
+                ((typeof quicvaPagination !== 'undefined' && quicvaPagination.ajaxUrl) ? quicvaPagination.ajaxUrl : (typeof quicvaCart !== 'undefined' ? quicvaCart.ajaxUrl : '')));
+        var ajaxNonce = (typeof quicvaQuickView !== 'undefined' && quicvaQuickView.nonce) ? quicvaQuickView.nonce :
+            ((typeof quicvaFilter !== 'undefined' && quicvaFilter.nonce) ? quicvaFilter.nonce :
+                ((typeof quicvaPagination !== 'undefined' && quicvaPagination.nonce) ? quicvaPagination.nonce : (typeof quicvaCart !== 'undefined' ? quicvaCart.nonce : '')));
 
         $.ajax({
             url: ajaxUrl,
             type: 'POST',
             data: {
-                action: 'quick_view_product',
+                action: 'quicva_quick_view_product',
                 product_id: productId,
                 nonce: ajaxNonce
             },
@@ -165,16 +165,16 @@ jQuery(document).ready(function($) {
             return;
         }
 
-        // Resolve ajaxUrl and nonce (prefer wcCart, fallback to others)
-        var addAjaxUrl = (typeof wcCart !== 'undefined' && wcCart.ajaxUrl) ? wcCart.ajaxUrl :
-            ((typeof wcQuickView !== 'undefined' && wcQuickView.ajaxUrl) ? wcQuickView.ajaxUrl :
-                ((typeof wcFilter !== 'undefined' && wcFilter.ajaxUrl) ? wcFilter.ajaxUrl : ''));
-        var addAjaxNonce = (typeof wcCart !== 'undefined' && wcCart.nonce) ? wcCart.nonce :
-            ((typeof wcQuickView !== 'undefined' && wcQuickView.nonce) ? wcQuickView.nonce :
-                ((typeof wcFilter !== 'undefined' && wcFilter.nonce) ? wcFilter.nonce : ''));
+        // Resolve ajaxUrl and nonce (prefer quicvaCart, fallback to others)
+        var addAjaxUrl = (typeof quicvaCart !== 'undefined' && quicvaCart.ajaxUrl) ? quicvaCart.ajaxUrl :
+            ((typeof quicvaQuickView !== 'undefined' && quicvaQuickView.ajaxUrl) ? quicvaQuickView.ajaxUrl :
+                ((typeof quicvaFilter !== 'undefined' && quicvaFilter.ajaxUrl) ? quicvaFilter.ajaxUrl : ''));
+        var addAjaxNonce = (typeof quicvaCart !== 'undefined' && quicvaCart.nonce) ? quicvaCart.nonce :
+            ((typeof quicvaQuickView !== 'undefined' && quicvaQuickView.nonce) ? quicvaQuickView.nonce :
+                ((typeof quicvaFilter !== 'undefined' && quicvaFilter.nonce) ? quicvaFilter.nonce : ''));
 
         var payload = {
-            action: 'add_to_cart',
+            action: 'quicva_add_to_cart',
             product_id: productId,
             quantity: 1,
             variation_id: selectedVariationId,
@@ -224,7 +224,7 @@ jQuery(document).ready(function($) {
                         var currentCount = $('#cart-items').children().length;
                         if (currentCount < expectedCount) {
                             // Re-fetch cart from server to ensure we have the latest state
-                            $.post(addAjaxUrl, { action: 'get_cart', nonce: addAjaxNonce }, function(resp) {
+                            $.post(addAjaxUrl, { action: 'quicva_get_cart', nonce: addAjaxNonce }, function(resp) {
                                 if (resp && resp.success) {
                                     if (typeof window.updateCartDisplay === 'function') {
                                         try {

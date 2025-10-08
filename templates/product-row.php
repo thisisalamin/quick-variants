@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 global $product;
 $visible_variants = get_query_var( 'visible_variants', array() );
 ?>

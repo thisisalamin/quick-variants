@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 /**
  * Table wrapper template.
  * Expects $atts, $total_products, $args_for_display in scope.
@@ -48,7 +52,7 @@
 				while ( $display_query->have_posts() ) :
 					$display_query->the_post();
 					global $product; // template expects $product
-					include QUICK_VARIANTS_PATH . 'templates/product-row.php';
+					include QUICVA_PATH . 'templates/product-row.php';
 				endwhile;
 				wp_reset_postdata();
 				?>
