@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Quick Variants
+ * Plugin Name: Quick Variants for WooCommerce
  * Description: Display WooCommerce products in a table format with expandable variants.
  * Version: 1.0
  * Author: Crafely
@@ -11,6 +11,7 @@
  * Domain Path: /languages
  * Requires at least: 5.0
  * Tested up to: 6.8
+ * Requires Plugins: woocommerce
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

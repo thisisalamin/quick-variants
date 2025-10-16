@@ -1,4 +1,4 @@
-=== Quick Variants ===
+=== Quick Variants for WooCommerce ===
 Contributors: crafely
 Tags: woocommerce, product table, variants, quick view, ajax cart
 Requires at least: 5.0
